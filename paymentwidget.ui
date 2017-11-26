@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Payments</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="mail-forward">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="4">
@@ -46,7 +50,8 @@
       <string>Options</string>
      </property>
      <property name="icon">
-      <iconset theme="preferences-system"/>
+      <iconset theme="preferences-system">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -56,12 +61,67 @@
       <string>Refresh</string>
      </property>
      <property name="icon">
-      <iconset theme="view-refresh"/>
+      <iconset theme="view-refresh">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>refreshButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PaymentWidget</receiver>
+   <slot>refreshButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>453</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PaymentWidget</receiver>
+   <slot>optionsButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>357</x>
+     <y>396</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>searchEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>PaymentWidget</receiver>
+   <slot>searchTextChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>470</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>refreshButtonClicked()</slot>
+  <slot>optionsButtonClicked()</slot>
+  <slot>searchTextChanged(QString)</slot>
+ </slots>
 </ui>

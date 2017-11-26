@@ -6,78 +6,115 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>350</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Options</string>
+   <string>Payment options</string>
   </property>
   <property name="windowIcon">
    <iconset theme="preferences-system">
     <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="startLabel">
-     <property name="text">
-      <string>Date from</string>
+   <item row="0" column="0" colspan="2">
+    <widget class="QGroupBox" name="settingsBox">
+     <property name="title">
+      <string>Calculation preferences</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QDateEdit" name="startDate"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="stopLabel">
-     <property name="text">
-      <string>Date to</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QDateEdit" name="stopDate"/>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="paymentLabel">
-     <property name="text">
-      <string>Payment</string>
-     </property>
+     <layout class="QGridLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="startLabel">
+        <property name="text">
+         <string>Date from</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDateEdit" name="startDate"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="stopLabel">
+        <property name="text">
+         <string>Date to</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDateEdit" name="stopDate"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="paymentLabel">
+        <property name="text">
+         <string>Payment</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="paymentSpin">
+        <property name="suffix">
+         <string> PLN</string>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="iddleLabel">
+        <property name="text">
+         <string>Iddle perioid</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="iddleSpin">
+        <property name="suffix">
+         <string/>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>30</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="paymentSpin">
-     <property name="suffix">
-      <string> PLN</string>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="maximum">
-      <double>100.000000000000000</double>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QListView" name="listView"/>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QCheckBox" name="refreshCheck">
-       <property name="text">
-        <string>Refresh data</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons">
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Group data by</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QListView" name="listView">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::MoveAction</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -90,8 +127,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>352</x>
-     <y>276</y>
+     <x>340</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -106,8 +143,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>389</x>
-     <y>282</y>
+     <x>340</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -122,8 +159,8 @@
    <slot>startDateChanged(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>326</x>
-     <y>23</y>
+     <x>328</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel">
      <x>602</x>
@@ -138,8 +175,8 @@
    <slot>stopDateChanged(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>358</x>
-     <y>56</y>
+     <x>328</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
      <x>703</x>
@@ -147,9 +184,43 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>iddleSpin</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>PaymentDialog</receiver>
+   <slot>iddleSpinChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>328</x>
+     <y>177</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>654</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>PaymentDialog</receiver>
+   <slot>dialogButtonClicked(QAbstractButton*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>470</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>startDateChanged(QDate)</slot>
   <slot>stopDateChanged(QDate)</slot>
+  <slot>iddleSpinChanged(int)</slot>
+  <slot>dialogButtonClicked(QAbstractButton*)</slot>
  </slots>
 </ui>

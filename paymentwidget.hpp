@@ -46,7 +46,9 @@ class PaymentWidget : public QWidget
 		QDate stopDate;
 
 		QMap<QString, bool> allGroups;
+
 		double singlePayment;
+		int iddleDelay;
 
 	public:
 
@@ -58,13 +60,19 @@ class PaymentWidget : public QWidget
 		void refreshButtonClicked(void);
 		void optionsButtonClicked(void);
 
+		void searchTextChanged(const QString& Text);
+
 	public slots:
 
 		void refreshData(const QDate& From, const QDate& To);
 
 		void setParameters(const QDate& Start, const QDate& Stop,
 					    const QMap<QString, bool>& Groups,
-					    double Payment, bool Refresh);
+					    double Payment, bool Refresh, int Delay);
+
+	signals:
+
+		void onDetailsUpdate(const QString&);
 
 };
 

@@ -28,6 +28,8 @@ PaymentDialog::PaymentDialog(QWidget *Parent)
 	auto Model = new QStandardItemModel(this);
 
 	ui->listView->setModel(Model);
+
+	iddleSpinChanged(ui->iddleSpin->value());
 }
 
 PaymentDialog::~PaymentDialog(void)
@@ -60,10 +62,11 @@ void PaymentDialog::accept(void)
 				ui->stopDate->date(),
 				getGroups(),
 				ui->paymentSpin->value(),
-				ui->refreshCheck->isChecked());
+				false,
+				ui->iddleSpin->value());
 }
 
-void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment)
+void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment, int Delay)
 {
 	QStandardItemModel* Model = qobject_cast<QStandardItemModel*>(ui->listView->model());
 
@@ -73,6 +76,9 @@ void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const Q
 	ui->startDate->setDate(Start);
 	ui->stopDate->setDate(Stop);
 
+	ui->paymentSpin->setValue(Payment);
+	ui->iddleSpin->setValue(Delay);
+
 	while (Model->rowCount()) Model->removeRow(0);
 
 	for (auto i = Groups.constBegin(); i != Groups.constEnd(); ++i)
@@ -81,9 +87,27 @@ void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const Q
 
 		Item->setCheckable(true);
 		Item->setCheckState(i.value() ? Qt::Checked : Qt::Unchecked);
+		Item->setDropEnabled(false);
 
 		Model->appendRow(Item);
 	}
+}
+
+void PaymentDialog::dialogButtonClicked(QAbstractButton* Button)
+{
+	const auto Save = ui->buttonBox->button(QDialogButtonBox::Apply);
+	const auto This = qobject_cast<QPushButton*>(Button);
+
+	if (Save != This) return;
+	else QDialog::accept();
+
+	emit onDialogAccepted(
+				ui->startDate->date(),
+				ui->stopDate->date(),
+				getGroups(),
+				ui->paymentSpin->value(),
+				true,
+				ui->iddleSpin->value());
 }
 
 void PaymentDialog::startDateChanged(const QDate& Date)
@@ -94,4 +118,9 @@ void PaymentDialog::startDateChanged(const QDate& Date)
 void PaymentDialog::stopDateChanged(const QDate& Date)
 {
 	ui->startDate->setMaximumDate(Date);
+}
+
+void PaymentDialog::iddleSpinChanged(int Value)
+{
+	ui->iddleSpin->setSuffix(tr(" minute(s)", nullptr, Value));
 }

@@ -22,7 +22,10 @@
 #define PAYMENTDIALOG_HPP
 
 #include <QStandardItemModel>
+#include <QDialogButtonBox>
+#include <QAbstractButton>
 #include <QStandardItem>
+#include <QPushButton>
 #include <QDialog>
 
 namespace Ui
@@ -51,18 +54,22 @@ class PaymentDialog : public QDialog
 
 		void setParameters(const QDate& Start, const QDate& Stop,
 					    const QMap<QString, bool>& Groups,
-					    double Payment);
+					    double Payment, int Delay);
 
 	private slots:
 
+		void dialogButtonClicked(QAbstractButton* Button);
+
 		void startDateChanged(const QDate& Date);
 		void stopDateChanged(const QDate& Date);
+
+		void iddleSpinChanged(int Value);
 
 	signals:
 
 		void onDialogAccepted(const QDate&, const QDate&,
 						  const QMap<QString, bool>&,
-						  double, bool);
+						  double, bool, int);
 
 };
 

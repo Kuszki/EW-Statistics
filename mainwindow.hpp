@@ -21,12 +21,14 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QDockWidget>
 #include <QMainWindow>
 #include <QLabel>
 
 #include "commonstructures.hpp"
 #include "databasesdialog.hpp"
 #include "applicationcore.hpp"
+#include "paymentwidget.hpp"
 #include "aboutdialog.hpp"
 
 namespace Ui
@@ -55,6 +57,13 @@ class MainWindow : public QMainWindow
 
 		explicit MainWindow(QWidget* Parent = nullptr);
 		virtual ~MainWindow(void) override;
+
+		void appendModule(QWidget* Module);
+		void removeModule(QWidget* Module);
+
+	public slots:
+
+		void removeDetailsInfo(void);
 
 	private slots:
 

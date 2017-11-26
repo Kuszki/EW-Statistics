@@ -34,7 +34,9 @@ MainWindow::MainWindow(QWidget* Parent)
 
 	Core->moveToThread(&Thread);
 
+	removeDetailsInfo();
 	setCentralWidget(Details);
+	appendModule(new PaymentWidget(Core, this));
 
 	connect(ui->actionAbout, &QAction::triggered, About, &AboutDialog::open);
 	connect(ui->actionDatabases, &QAction::triggered, this, &MainWindow::databasesActionClicked);
@@ -47,6 +49,25 @@ MainWindow::~MainWindow(void)
 
 	delete Core;
 	delete ui;
+}
+
+void MainWindow::appendModule(QWidget* Module)
+{
+	for (const auto D : Modules) if (D->widget() == Module) return;
+
+	QDockWidget* Dock = new QDockWidget(this);
+
+	Dock->setWindowTitle(Module->windowTitle());
+	Dock->setWidget(Module);
+
+	addDockWidget(Qt::LeftDockWidgetArea, Dock);
+
+	Modules.append(Dock);
+}
+
+void MainWindow::removeDetailsInfo(void)
+{
+	Details->setVisible(false);
 }
 
 void MainWindow::databasesActionClicked(void)

@@ -98,8 +98,13 @@ void PaymentWidget::optionsButtonClicked(void)
 
 	connect(Dialog, &PaymentDialog::onDialogAccepted, this, &PaymentWidget::setParameters);
 
-	Dialog->setParameters(startDate, stopDate, allGroups, singlePayment);
+	Dialog->setParameters(startDate, stopDate, allGroups, singlePayment, iddleDelay);
 	Dialog->open();
+}
+
+void PaymentWidget::searchTextChanged(const QString& Text)
+{
+	// TODO
 }
 
 void PaymentWidget::refreshData(const QDate& From, const QDate& To)
@@ -107,13 +112,15 @@ void PaymentWidget::refreshData(const QDate& From, const QDate& To)
 	// TODO
 }
 
-void PaymentWidget::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment, bool Refresh)
+void PaymentWidget::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment, bool Refresh, int Delay)
 {
 	startDate = Start;
 	stopDate = Stop;
 
 	allGroups = Groups;
+
 	singlePayment = Payment;
+	iddleDelay = Delay;
 
 	if (Refresh) refreshData(Start, Stop);
 }
