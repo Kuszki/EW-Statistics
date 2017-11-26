@@ -17,32 +17,55 @@
  *  along with this program. If not, see http://www.gnu.org/licenses/.     *
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#ifndef PAYMENTWIDGET_HPP
+#define PAYMENTWIDGET_HPP
 
-#ifndef COMMONSTRUCTURES_HPP
-#define COMMONSTRUCTURES_HPP
+#include <QWidget>
 
-#include <QtCore>
+#include "commonstructures.hpp"
+#include "applicationcore.hpp"
+#include "paymentdialog.hpp"
 
-#include <QDebug>
-
-struct DBINFO
+namespace Ui
 {
-	QString Name;
+	class PaymentWidget;
+}
 
-	QString Server;
-	QString Path;
+class PaymentWidget : public QWidget
+{
 
-	bool Enabled;
+		Q_OBJECT
+
+	private:
+
+		ApplicationCore* Core;
+
+		Ui::PaymentWidget* ui;
+
+		QDate startDate;
+		QDate stopDate;
+
+		QMap<QString, bool> allGroups;
+		double singlePayment;
+
+	public:
+
+		explicit PaymentWidget(ApplicationCore* App, QWidget* Parent = nullptr);
+		virtual ~PaymentWidget(void) override;
+
+	private slots:
+
+		void refreshButtonClicked(void);
+		void optionsButtonClicked(void);
+
+	public slots:
+
+		void refreshData(const QDate& From, const QDate& To);
+
+		void setParameters(const QDate& Start, const QDate& Stop,
+					    const QMap<QString, bool>& Groups,
+					    double Payment, bool Refresh);
+
 };
 
-Q_DECLARE_METATYPE(DBINFO)
-
-uint qHash(const DBINFO& K);
-
-bool operator == (const DBINFO& A, const DBINFO& B);
-bool operator != (const DBINFO& A, const DBINFO& B);
-
-QDataStream& operator << (QDataStream& Stream, const DBINFO& V);
-QDataStream& operator >> (QDataStream& Stream, DBINFO& V);
-
-#endif // COMMONSTRUCTURES_HPP
+#endif // PAYMENTWIDGET_HPP

@@ -18,31 +18,52 @@
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef COMMONSTRUCTURES_HPP
-#define COMMONSTRUCTURES_HPP
+#ifndef PAYMENTDIALOG_HPP
+#define PAYMENTDIALOG_HPP
 
-#include <QtCore>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QDialog>
 
-#include <QDebug>
-
-struct DBINFO
+namespace Ui
 {
-	QString Name;
+	class PaymentDialog;
+}
 
-	QString Server;
-	QString Path;
+class PaymentDialog : public QDialog
+{
+		Q_OBJECT
 
-	bool Enabled;
+	private:
+
+		Ui::PaymentDialog* ui;
+
+	public:
+
+		explicit PaymentDialog(QWidget* Parent = nullptr);
+		virtual ~PaymentDialog(void) override;
+
+		QMap<QString, bool> getGroups(void) const;
+
+	public slots:
+
+		virtual void accept(void) override;
+
+		void setParameters(const QDate& Start, const QDate& Stop,
+					    const QMap<QString, bool>& Groups,
+					    double Payment);
+
+	private slots:
+
+		void startDateChanged(const QDate& Date);
+		void stopDateChanged(const QDate& Date);
+
+	signals:
+
+		void onDialogAccepted(const QDate&, const QDate&,
+						  const QMap<QString, bool>&,
+						  double, bool);
+
 };
 
-Q_DECLARE_METATYPE(DBINFO)
-
-uint qHash(const DBINFO& K);
-
-bool operator == (const DBINFO& A, const DBINFO& B);
-bool operator != (const DBINFO& A, const DBINFO& B);
-
-QDataStream& operator << (QDataStream& Stream, const DBINFO& V);
-QDataStream& operator >> (QDataStream& Stream, DBINFO& V);
-
-#endif // COMMONSTRUCTURES_HPP
+#endif // PAYMENTDIALOG_HPP

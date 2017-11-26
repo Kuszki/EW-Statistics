@@ -21,6 +21,8 @@
 #ifndef APPLICATIONCORE_HPP
 #define APPLICATIONCORE_HPP
 
+#include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QObject>
 
 #include "commonstructures.hpp"
@@ -30,6 +32,13 @@ class ApplicationCore : public QObject
 
 		Q_OBJECT
 
+	private:
+
+		mutable QMutex Synchronizer;
+
+		QVector<QSqlDatabase> Databases;
+		QList<DBINFO> Infolist;
+
 	public:
 
 		explicit ApplicationCore(QObject* Parent = nullptr);
@@ -37,6 +46,14 @@ class ApplicationCore : public QObject
 
 		QList<DBINFO> getSavedDatabases(void) const;
 		void saveDatabasesList(const QList<DBINFO>& List);
+
+		QVector<QSqlDatabase> getDatabases(void) const;
+
+	public slots:
+
+		void openDatabases(const QString& User,
+					    const QString& Password);
+		void closeDatabases(void);
 
 	signals:
 

@@ -21,9 +21,9 @@
 #include "applicationcore.hpp"
 
 ApplicationCore::ApplicationCore(QObject* Parent)
-: QObject(Parent)
+: QObject(Parent), Synchronizer(QMutex::Recursive)
 {
-
+	Infolist = getSavedDatabases();
 }
 
 ApplicationCore::~ApplicationCore(void)
@@ -33,7 +33,9 @@ ApplicationCore::~ApplicationCore(void)
 
 QList<DBINFO> ApplicationCore::getSavedDatabases(void) const
 {
-	QSettings Settings("EW-Statistics"); QList<DBINFO> List;
+	QMutexLocker Locker(&Synchronizer);
+	QSettings Settings("EW-Statistics");
+	QList<DBINFO> List;
 
 	const int Size = Settings.beginReadArray("Databases");
 
@@ -43,6 +45,7 @@ QList<DBINFO> ApplicationCore::getSavedDatabases(void) const
 
 		List.append(
 		{
+			Settings.value("name").toString(),
 			Settings.value("server").toString(),
 			Settings.value("path").toString(),
 			Settings.value("active").toBool()
@@ -56,6 +59,7 @@ QList<DBINFO> ApplicationCore::getSavedDatabases(void) const
 
 void ApplicationCore::saveDatabasesList(const QList<DBINFO>& List)
 {
+	QMutexLocker Locker(&Synchronizer);
 	QSettings Settings("EW-Statistics");
 
 	Settings.beginWriteArray("Databases");
@@ -64,10 +68,56 @@ void ApplicationCore::saveDatabasesList(const QList<DBINFO>& List)
 	{
 		Settings.setArrayIndex(i);
 
+		Settings.setValue("name", List[i].Name);
 		Settings.setValue("server", List[i].Server);
-		Settings.value("path", List[i].Path);
-		Settings.value("active", List[i].Enabled);
+		Settings.setValue("path", List[i].Path);
+		Settings.setValue("active", List[i].Enabled);
 	}
 
-	Settings.endArray();
+	Settings.endArray(); Infolist = List;
+}
+
+QVector<QSqlDatabase> ApplicationCore::getDatabases(void) const
+{
+	QMutexLocker Locker(&Synchronizer); return Databases;
+}
+
+void ApplicationCore::openDatabases(const QString& User, const QString& Password)
+{
+	QMutexLocker Locker(&Synchronizer);
+
+	if (!Databases.isEmpty()) closeDatabases();
+
+	if (!Infolist.isEmpty()) Databases.reserve(Infolist.size());
+
+	for (const auto& Db : Infolist)
+	{
+		Databases.append(QSqlDatabase::addDatabase("IBASE", QString::number(qHash(Db))));
+
+		QSqlDatabase& Database = Databases.last();
+
+		Database.setUserName(User);
+		Database.setPassword(Password);
+
+		Database.setHostName(Db.Server);
+		Database.setDatabaseName(Db.Path);
+
+		if (!Database.open()) Databases.removeLast();
+	}
+}
+
+void ApplicationCore::closeDatabases(void)
+{
+	QMutexLocker Locker(&Synchronizer);
+
+	for (auto& Database : Databases)
+	{
+		const QString Name = Database.connectionName();
+
+		Database.close();
+
+		QSqlDatabase::removeDatabase(Name);
+	}
+
+	Databases.clear();
 }

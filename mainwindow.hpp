@@ -22,6 +22,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QLabel>
 
 #include "commonstructures.hpp"
 #include "databasesdialog.hpp"
@@ -42,11 +43,13 @@ class MainWindow : public QMainWindow
 
 		QVector<QDockWidget*> Modules;
 
-		Ui::MainWindow* ui;
-
 		ApplicationCore* Core;
-
 		AboutDialog* About;
+
+		Ui::MainWindow* ui;
+		QLabel* Details;
+
+		QThread Thread;
 
 	public:
 

@@ -26,7 +26,7 @@ DatabasesDialog::DatabasesDialog(const QList<DBINFO>& Databases, QWidget* Parent
 {
 	static const QStringList Headers =
 	{
-		tr("Active"),
+		tr("Name"),
 		tr("Server"),
 		tr("Path")
 	};
@@ -38,6 +38,8 @@ DatabasesDialog::DatabasesDialog(const QList<DBINFO>& Databases, QWidget* Parent
 	Model->setHorizontalHeaderLabels(Headers);
 
 	ui->tableView->setModel(Model);
+
+	setDatabases(Databases);
 }
 
 DatabasesDialog::~DatabasesDialog(void)
@@ -51,15 +53,14 @@ QList<DBINFO> DatabasesDialog::getDatabases(void) const
 
 	for (int i = 0; i < Model->rowCount(); ++i) List.append(
 	{
-		Model->item(i, 1)->data().toString(),
-		Model->item(i, 2)->data().toString(),
-		Model->item(i, 0)->data().toBool(),
+		Model->item(i, 0)->data(Qt::EditRole).toString(),
+		Model->item(i, 1)->data(Qt::EditRole).toString(),
+		Model->item(i, 2)->data(Qt::EditRole).toString(),
+		Model->item(i, 0)->checkState() == Qt::Checked,
 	});
 
-	for (const auto& Db : List)
+	for (const auto& Db : List) if (!Finall.contains(Db))
 	{
-		qDebug() << QVariant::fromValue(Db);
-
 		if (!Db.Path.isEmpty() && !Db.Server.isEmpty())
 		{
 			Finall.append(Db);
@@ -80,12 +81,11 @@ void DatabasesDialog::setDatabases(const QList<DBINFO>& Databases)
 
 	for (const auto& Db : Databases)
 	{
-		auto Active = new QStandardItem();
+		auto Active = new QStandardItem(Db.Name);
 		auto Server = new QStandardItem(Db.Server);
 		auto Path = new QStandardItem(Db.Path);
 
 		Active->setCheckable(true);
-		Active->setEditable(false);
 		Active->setCheckState(Db.Enabled ? Qt::Checked : Qt::Unchecked);
 
 		Model->appendRow(QList<QStandardItem*>() << Active << Server << Path);
@@ -99,7 +99,6 @@ void DatabasesDialog::addButtonClicked(void)
 	auto Path = new QStandardItem();
 
 	Active->setCheckable(true);
-	Active->setEditable(false);
 	Active->setCheckState(Qt::Unchecked);
 
 	Model->appendRow(QList<QStandardItem*>() << Active << Server << Path);

@@ -29,8 +29,10 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
-	qRegisterMetaType<DBINFO>();
+	qRegisterMetaType<DBINFO>("DBINFO");
+
 	qRegisterMetaType<QList<DBINFO>>("QList<DBINFO>");
+	qRegisterMetaType<QMap<QString,bool>>("QMap<QString,bool>");
 
 	a.setApplicationName("EW-Statistics");
 	a.setOrganizationName("Łukasz \"Kuszki\" Dróżdż");

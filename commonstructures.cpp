@@ -20,13 +20,30 @@
 
 #include "commonstructures.hpp"
 
+uint qHash(const DBINFO& K)
+{
+	return qHash(K.Name + K.Server + K.Path);
+}
+
+bool operator == (const DBINFO& A, const DBINFO& B)
+{
+	return A.Path == B.Path && A.Server == B.Server;
+}
+
+bool operator != (const DBINFO& A, const DBINFO& B)
+{
+	return A.Path != B.Path || A.Server != B.Server;
+}
+
+
 QDataStream& operator << (QDataStream& Stream, const DBINFO& V)
 {
-	Stream << V.Server << V.Path << V.Enabled; return Stream;
+	Stream << V.Name << V.Server << V.Path << V.Enabled; return Stream;
 }
 
 QDataStream& operator >> (QDataStream& Stream, DBINFO& V)
 {
+	Stream >> V.Name;
 	Stream >> V.Server;
 	Stream >> V.Path;
 	Stream >> V.Enabled;

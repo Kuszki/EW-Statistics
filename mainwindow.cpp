@@ -24,11 +24,17 @@
 MainWindow::MainWindow(QWidget* Parent)
 : QMainWindow(Parent), ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
+	ui->setupUi(this); Thread.start();
 
-	Core = new ApplicationCore(this);
+	Core = new ApplicationCore();
 
 	About = new AboutDialog(this);
+
+	Details = new QLabel(this);
+
+	Core->moveToThread(&Thread);
+
+	setCentralWidget(Details);
 
 	connect(ui->actionAbout, &QAction::triggered, About, &AboutDialog::open);
 	connect(ui->actionDatabases, &QAction::triggered, this, &MainWindow::databasesActionClicked);
@@ -36,6 +42,10 @@ MainWindow::MainWindow(QWidget* Parent)
 
 MainWindow::~MainWindow(void)
 {
+	Thread.exit();
+	Thread.wait();
+
+	delete Core;
 	delete ui;
 }
 

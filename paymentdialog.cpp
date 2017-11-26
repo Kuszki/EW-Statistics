@@ -1,0 +1,97 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                         *
+ *  {description}                                                          *
+ *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
+ *                                                                         *
+ *  This program is free software: you can redistribute it and/or modify   *
+ *  it under the terms of the GNU General Public License as published by   *
+ *  the  Free Software Foundation, either  version 3 of the  License, or   *
+ *  (at your option) any later version.                                    *
+ *                                                                         *
+ *  This  program  is  distributed  in the hope  that it will be useful,   *
+ *  but WITHOUT ANY  WARRANTY;  without  even  the  implied  warranty of   *
+ *  MERCHANTABILITY  or  FITNESS  FOR  A  PARTICULAR  PURPOSE.  See  the   *
+ *  GNU General Public License for more details.                           *
+ *                                                                         *
+ *  You should have  received a copy  of the  GNU General Public License   *
+ *  along with this program. If not, see http://www.gnu.org/licenses/.     *
+ *                                                                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#include "paymentdialog.hpp"
+#include "ui_paymentdialog.h"
+
+PaymentDialog::PaymentDialog(QWidget *Parent)
+: QDialog(Parent), ui(new Ui::PaymentDialog)
+{
+	ui->setupUi(this);
+
+	auto Model = new QStandardItemModel(this);
+
+	ui->listView->setModel(Model);
+}
+
+PaymentDialog::~PaymentDialog(void)
+{
+	delete ui;
+}
+
+QMap<QString, bool> PaymentDialog::getGroups(void) const
+{
+	QStandardItemModel* Model = qobject_cast<QStandardItemModel*>(ui->listView->model());
+
+	QMap<QString, bool> Items;
+
+	for (int i = 0; i < Model->rowCount(); ++i)
+	{
+		const auto Item = Model->item(i);
+
+		Items.insert(Item->text(), Item->checkState() == Qt::Checked);
+	}
+
+	return Items;
+}
+
+void PaymentDialog::accept(void)
+{
+	QDialog::accept();
+
+	emit onDialogAccepted(
+				ui->startDate->date(),
+				ui->stopDate->date(),
+				getGroups(),
+				ui->paymentSpin->value(),
+				ui->refreshCheck->isChecked());
+}
+
+void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment)
+{
+	QStandardItemModel* Model = qobject_cast<QStandardItemModel*>(ui->listView->model());
+
+	ui->startDate->setMaximumDate(Stop);
+	ui->stopDate->setMinimumDate(Start);
+
+	ui->startDate->setDate(Start);
+	ui->stopDate->setDate(Stop);
+
+	while (Model->rowCount()) Model->removeRow(0);
+
+	for (auto i = Groups.constBegin(); i != Groups.constEnd(); ++i)
+	{
+		QStandardItem* Item = new QStandardItem(i.key());
+
+		Item->setCheckable(true);
+		Item->setCheckState(i.value() ? Qt::Checked : Qt::Unchecked);
+
+		Model->appendRow(Item);
+	}
+}
+
+void PaymentDialog::startDateChanged(const QDate& Date)
+{
+	ui->stopDate->setMinimumDate(Date);
+}
+
+void PaymentDialog::stopDateChanged(const QDate& Date)
+{
+	ui->startDate->setMaximumDate(Date);
+}
