@@ -34,9 +34,20 @@ MainWindow::MainWindow(QWidget* Parent)
 
 	Core->moveToThread(&Thread);
 
+	PaymentWidget* Payments = new PaymentWidget(Core, this);
+
 	removeDetailsInfo();
 	setCentralWidget(Details);
-	appendModule(new PaymentWidget(Core, this));
+	appendModule(Payments);
+
+	QSettings Settings("EW-Statistics");
+
+	Settings.beginGroup("Window");
+	restoreGeometry(Settings.value("geometry").toByteArray());
+	restoreState(Settings.value("state").toByteArray());
+	Settings.endGroup();
+
+	connect(Payments, &PaymentWidget::onDetailsUpdate, this, &MainWindow::updateDetailsInfo);
 
 	connect(ui->actionAbout, &QAction::triggered, About, &AboutDialog::open);
 	connect(ui->actionDatabases, &QAction::triggered, this, &MainWindow::databasesActionClicked);
@@ -44,6 +55,13 @@ MainWindow::MainWindow(QWidget* Parent)
 
 MainWindow::~MainWindow(void)
 {
+	QSettings Settings("EW-Statistics");
+
+	Settings.beginGroup("Window");
+	Settings.setValue("state", saveState());
+	Settings.setValue("geometry", saveGeometry());
+	Settings.endGroup();
+
 	Thread.exit();
 	Thread.wait();
 
@@ -57,12 +75,19 @@ void MainWindow::appendModule(QWidget* Module)
 
 	QDockWidget* Dock = new QDockWidget(this);
 
+	Dock->setObjectName(Module->objectName());
 	Dock->setWindowTitle(Module->windowTitle());
 	Dock->setWidget(Module);
 
 	addDockWidget(Qt::LeftDockWidgetArea, Dock);
 
 	Modules.append(Dock);
+}
+
+void MainWindow::updateDetailsInfo(const QString& Info)
+{
+	if (Info.isEmpty()) Details->setVisible(false);
+	else Details->setText(Info);
 }
 
 void MainWindow::removeDetailsInfo(void)

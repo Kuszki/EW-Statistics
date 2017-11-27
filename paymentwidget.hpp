@@ -36,6 +36,39 @@ class PaymentWidget : public QWidget
 
 		Q_OBJECT
 
+	public: enum ACTION
+	{
+		ADD_OBJECT,
+		MOD_OBJECT,
+		DEL_OBJECT,
+
+		ADD_SEGMENT,
+		MOD_SEGMENT,
+		DEL_SEGMENT,
+
+		ADD_TEXT,
+		MOD_TEXT,
+		DEL_TEXT
+	};
+
+	public: struct RECORD
+	{
+		QString User;
+		QDateTime Time;
+
+		QString Database;
+		ACTION Action;
+	};
+
+	public: struct FILTER
+	{
+		QString User;
+		QString Base;
+
+		int Month;
+		int Day;
+	};
+
 	private:
 
 		ApplicationCore* Core;
@@ -50,10 +83,16 @@ class PaymentWidget : public QWidget
 		double singlePayment;
 		int iddleDelay;
 
+		QList<RECORD> Records;
+
 	public:
 
 		explicit PaymentWidget(ApplicationCore* App, QWidget* Parent = nullptr);
 		virtual ~PaymentWidget(void) override;
+
+	private:
+
+		QList<RECORD> filterRecords(const QList<RECORD>& List, const FILTER& Filter) const;
 
 	private slots:
 

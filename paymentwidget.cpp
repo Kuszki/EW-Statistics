@@ -65,23 +65,42 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 
 PaymentWidget::~PaymentWidget(void)
 {
-	QSettings Settings("EW-Statistics");
-
 	QStringList Groups = allGroups.keys();
 	QVariantList On;
 
 	for (const auto& S : allGroups) On.append(S);
 
-	Settings.beginGroup("Payments");
+	QSettings Settings("EW-Statistics");
 
+	Settings.beginGroup("Payments");
 	Settings.setValue("start", startDate);
 	Settings.setValue("stop", stopDate);
 	Settings.setValue("payment", singlePayment);
-
 	Settings.setValue("groups", Groups);
 	Settings.setValue("enabled", On);
+	Settings.endGroup();
 
 	delete ui;
+}
+
+QList<PaymentWidget::RECORD> PaymentWidget::filterRecords(const QList<PaymentWidget::RECORD>& List, const FILTER& Filter) const
+{
+	QList<PaymentWidget::RECORD> Filtered;
+
+	for (const auto R : List)
+	{
+		bool OK = true;
+
+		OK = OK && (Filter.User.isEmpty() || Filter.User == R.User);
+		OK = OK && (Filter.Base.isEmpty() || Filter.Base == R.Database);
+
+		OK = OK && (Filter.Month == 0 || Filter.Month == R.Time.date().month());
+		OK = OK && (Filter.Day == 0 || Filter.Day == R.Time.date().day());
+
+		if (OK) Filtered.append(R);
+	}
+
+	return Filtered;
 }
 
 void PaymentWidget::refreshButtonClicked(void)

@@ -59,10 +59,10 @@ class MainWindow : public QMainWindow
 		virtual ~MainWindow(void) override;
 
 		void appendModule(QWidget* Module);
-		void removeModule(QWidget* Module);
 
 	public slots:
 
+		void updateDetailsInfo(const QString& Info);
 		void removeDetailsInfo(void);
 
 	private slots:
