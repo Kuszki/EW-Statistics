@@ -22,6 +22,7 @@
 #define APPLICATIONCORE_HPP
 
 #include <QSqlDatabase>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QObject>
 
@@ -56,6 +57,11 @@ class ApplicationCore : public QObject
 		void closeDatabases(void);
 
 	signals:
+
+		void onDatabasesConnect(bool);
+		void onDatabasesDisconnect(void);
+
+		void onErrorOccurs(const QString&);
 
 };
 

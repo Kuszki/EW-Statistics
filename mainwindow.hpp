@@ -28,6 +28,7 @@
 #include "commonstructures.hpp"
 #include "databasesdialog.hpp"
 #include "applicationcore.hpp"
+#include "connectdialog.hpp"
 #include "paymentwidget.hpp"
 #include "aboutdialog.hpp"
 
@@ -67,7 +68,13 @@ class MainWindow : public QMainWindow
 
 	private slots:
 
+		void connectActionClicked(void);
 		void databasesActionClicked(void);
+
+		void loginDataAccepted(void);
+
+		void databaseConnected(bool OK);
+		void databaseDisconnected(void);
 
 };
 

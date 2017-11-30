@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
- *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
+ *  Firebird database editor                                               *
+ *  Copyright (C) 2016  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
  *  it under the terms of the GNU General Public License as published by   *
@@ -18,59 +18,49 @@
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef PAYMENTDIALOG_HPP
-#define PAYMENTDIALOG_HPP
+#ifndef CONNECTDIALOG_HPP
+#define CONNECTDIALOG_HPP
 
-#include <QStandardItemModel>
-#include <QDialogButtonBox>
-#include <QAbstractButton>
-#include <QStandardItem>
+#include <QMessageBox>
 #include <QPushButton>
+#include <QSettings>
 #include <QDialog>
 
 namespace Ui
 {
-	class PaymentDialog;
+	class ConnectDialog;
 }
 
-class PaymentDialog : public QDialog
+class ConnectDialog : public QDialog
 {
+
 		Q_OBJECT
 
 	private:
 
-		Ui::PaymentDialog* ui;
+		Ui::ConnectDialog* ui;
 
 	public:
 
-		explicit PaymentDialog(QWidget* Parent = nullptr);
-		virtual ~PaymentDialog(void) override;
+		explicit ConnectDialog(QWidget* Parent = nullptr);
+		virtual ~ConnectDialog(void) override;
 
-		QList<QPair<QString, bool>> getGroups(void) const;
+	private slots:
+
+		void edited(void);
 
 	public slots:
 
 		virtual void accept(void) override;
+		virtual void reject(void) override;
 
-		void setParameters(const QDate& Start, const QDate& Stop,
-					    const QList<QPair<QString, bool>>& Groups,
-					    double Payment, int Delay);
-
-	private slots:
-
-		void dialogButtonClicked(QAbstractButton* Button);
-
-		void startDateChanged(const QDate& Date);
-		void stopDateChanged(const QDate& Date);
-
-		void iddleSpinChanged(int Value);
+		void refused(const QString& Error);
+		void connected(bool OK);
 
 	signals:
 
-		void onDialogAccepted(const QDate&, const QDate&,
-						  const QList<QPair<QString, bool>>&,
-						  double, bool, int);
+		void onAccept(const QString&, const QString&);
 
 };
 
-#endif // PAYMENTDIALOG_HPP
+#endif // CONNECTDIALOG_HPP

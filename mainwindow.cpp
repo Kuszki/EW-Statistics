@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget* Parent)
 	removeDetailsInfo();
 	setCentralWidget(Details);
 	appendModule(Payments);
+	databaseConnected(false);
 
 	QSettings Settings("EW-Statistics");
 
@@ -51,6 +52,11 @@ MainWindow::MainWindow(QWidget* Parent)
 
 	connect(ui->actionAbout, &QAction::triggered, About, &AboutDialog::open);
 	connect(ui->actionDatabases, &QAction::triggered, this, &MainWindow::databasesActionClicked);
+	connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::connectActionClicked);
+
+	connect(ui->actionDisconnect, &QAction::triggered, Core, &ApplicationCore::closeDatabases);
+
+	connect(Core, &ApplicationCore::onDatabasesConnect, this, &MainWindow::databaseConnected);
 }
 
 MainWindow::~MainWindow(void)
@@ -95,8 +101,26 @@ void MainWindow::removeDetailsInfo(void)
 	Details->setVisible(false);
 }
 
-void MainWindow::databasesActionClicked(void)
+void MainWindow::connectActionClicked(void)
 {
+	if (Core->getSavedDatabases().isEmpty()) { databasesActionClicked(); return; }
+
+	ConnectDialog* Dialog = new ConnectDialog(this);
+
+	connect(Dialog, &ConnectDialog::onAccept, this, &MainWindow::loginDataAccepted);
+
+	connect(Dialog, &ConnectDialog::onAccept, Core, &ApplicationCore::openDatabases);
+	connect(Dialog, &ConnectDialog::accepted, Dialog, &ConnectDialog::deleteLater);
+	connect(Dialog, &ConnectDialog::rejected, Dialog, &ConnectDialog::deleteLater);
+
+	connect(Core, &ApplicationCore::onDatabasesConnect, Dialog, &ConnectDialog::connected);
+	connect(Core, &ApplicationCore::onErrorOccurs, Dialog, &ConnectDialog::refused);
+
+	Dialog->open();
+}
+
+void MainWindow::databasesActionClicked(void)
+{	
 	DatabasesDialog* Dialog = new DatabasesDialog(Core->getSavedDatabases(), this);
 
 	connect(Dialog, &DatabasesDialog::onDialogAccepted, Core, &ApplicationCore::saveDatabasesList);
@@ -105,4 +129,26 @@ void MainWindow::databasesActionClicked(void)
 	connect(Dialog, &DatabasesDialog::rejected, Dialog, &DatabasesDialog::deleteLater);
 
 	Dialog->open();
+}
+
+void MainWindow::loginDataAccepted(void)
+{
+	ui->actionConnect->setEnabled(false);
+}
+
+void MainWindow::databaseConnected(bool OK)
+{
+	ui->actionConnect->setEnabled(!OK);
+	ui->actionDisconnect->setEnabled(OK);
+	ui->actionDatabases->setEnabled(!OK);
+
+	for (auto Group : Modules)
+	{
+		Group->widget()->setEnabled(OK);
+	}
+}
+
+void MainWindow::databaseDisconnected(void)
+{
+	databaseConnected(false);
 }

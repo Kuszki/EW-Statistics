@@ -26,10 +26,7 @@ ApplicationCore::ApplicationCore(QObject* Parent)
 	Infolist = getSavedDatabases();
 }
 
-ApplicationCore::~ApplicationCore(void)
-{
-
-}
+ApplicationCore::~ApplicationCore(void) {}
 
 QList<DBINFO> ApplicationCore::getSavedDatabases(void) const
 {
@@ -84,15 +81,15 @@ QVector<QSqlDatabase> ApplicationCore::getDatabases(void) const
 
 void ApplicationCore::openDatabases(const QString& User, const QString& Password)
 {
-	QMutexLocker Locker(&Synchronizer);
+	QMutexLocker Locker(&Synchronizer); QStringList Errors;
 
 	if (!Databases.isEmpty()) closeDatabases();
 
 	if (!Infolist.isEmpty()) Databases.reserve(Infolist.size());
 
-	for (const auto& Db : Infolist)
+	for (const auto& Db : Infolist) if (Db.Enabled)
 	{
-		Databases.append(QSqlDatabase::addDatabase("IBASE", QString::number(qHash(Db))));
+		Databases.append(QSqlDatabase::addDatabase("QIBASE", QString::number(qHash(Db))));
 
 		QSqlDatabase& Database = Databases.last();
 
@@ -102,22 +99,42 @@ void ApplicationCore::openDatabases(const QString& User, const QString& Password
 		Database.setHostName(Db.Server);
 		Database.setDatabaseName(Db.Path);
 
-		if (!Database.open()) Databases.removeLast();
+		if (!Database.open())
+		{
+			Errors.append(Db.Server + ":" + Db.Path + " - " +
+					    Database.lastError().text());
+
+			Databases.removeLast();
+		}
 	}
+
+	if (Errors.size())
+	{
+		emit onErrorOccurs(Errors.join('\n'));
+	}
+
+	emit onDatabasesConnect(Databases.size());
 }
 
 void ApplicationCore::closeDatabases(void)
 {
 	QMutexLocker Locker(&Synchronizer);
+	QStringList Connections;
 
 	for (auto& Database : Databases)
 	{
 		const QString Name = Database.connectionName();
 
 		Database.close();
-
-		QSqlDatabase::removeDatabase(Name);
+		Connections.append(Name);
 	}
 
 	Databases.clear();
+
+	for (const auto& Name : Connections)
+	{
+		QSqlDatabase::removeDatabase(Name);
+	}
+
+	emit onDatabasesConnect(false);
 }

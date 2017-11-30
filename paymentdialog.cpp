@@ -37,17 +37,21 @@ PaymentDialog::~PaymentDialog(void)
 	delete ui;
 }
 
-QMap<QString, bool> PaymentDialog::getGroups(void) const
+QList<QPair<QString, bool>> PaymentDialog::getGroups(void) const
 {
 	QStandardItemModel* Model = qobject_cast<QStandardItemModel*>(ui->listView->model());
 
-	QMap<QString, bool> Items;
+	QList<QPair<QString, bool>> Items;
 
 	for (int i = 0; i < Model->rowCount(); ++i)
 	{
 		const auto Item = Model->item(i);
 
-		Items.insert(Item->text(), Item->checkState() == Qt::Checked);
+		Items.append(
+		{
+			Item->text(),
+			Item->checkState() == Qt::Checked
+		});
 	}
 
 	return Items;
@@ -66,7 +70,7 @@ void PaymentDialog::accept(void)
 				ui->iddleSpin->value());
 }
 
-void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const QMap<QString, bool>& Groups, double Payment, int Delay)
+void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const QList<QPair<QString, bool>>& Groups, double Payment, int Delay)
 {
 	QStandardItemModel* Model = qobject_cast<QStandardItemModel*>(ui->listView->model());
 
@@ -81,12 +85,12 @@ void PaymentDialog::setParameters(const QDate& Start, const QDate& Stop, const Q
 
 	while (Model->rowCount()) Model->removeRow(0);
 
-	for (auto i = Groups.constBegin(); i != Groups.constEnd(); ++i)
+	for (const auto& Group : Groups)
 	{
-		QStandardItem* Item = new QStandardItem(i.key());
+		QStandardItem* Item = new QStandardItem(Group.first);
 
 		Item->setCheckable(true);
-		Item->setCheckState(i.value() ? Qt::Checked : Qt::Unchecked);
+		Item->setCheckState(Group.second ? Qt::Checked : Qt::Unchecked);
 		Item->setDropEnabled(false);
 
 		Model->appendRow(Item);

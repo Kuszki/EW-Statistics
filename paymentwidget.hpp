@@ -20,11 +20,16 @@
 #ifndef PAYMENTWIDGET_HPP
 #define PAYMENTWIDGET_HPP
 
+#include <QMutexLocker>
 #include <QWidget>
+#include <QDebug>
+
+#include <QtConcurrent>
 
 #include "commonstructures.hpp"
 #include "applicationcore.hpp"
 #include "paymentdialog.hpp"
+#include "recordmodel.hpp"
 
 namespace Ui
 {
@@ -54,22 +59,57 @@ class PaymentWidget : public QWidget
 	public: struct RECORD
 	{
 		QString User;
-		QDateTime Time;
 
-		QString Database;
-		ACTION Action;
+		QDateTime Start;
+		QDateTime Stop;
+
+		int ObjectsADD = 0;
+		int ObjectsMOD = 0;
+		int ObjectsDEL = 0;
+
+		int TextsADD = 0;
+		int TextsMOD = 0;
+		int TextsDEL = 0;
+
+		int SegmentsADD = 0;
+		int SegmentsMOD = 0;
+		int SegmentsDEL = 0;
+	};
+
+	public: struct STATPART
+	{
+		QString User;
+
+		QDateTime Start;
+		QDateTime Stop;
+
+		int ObjectsADD = 0;
+		int ObjectsMOD = 0;
+		int ObjectsDEL = 0;
+
+		int TextsADD = 0;
+		int TextsMOD = 0;
+		int TextsDEL = 0;
+
+		int SegmentsADD = 0;
+		int SegmentsMOD = 0;
+		int SegmentsDEL = 0;
+
+		double Payment = 0.0;
+		unsigned Time = 0;
 	};
 
 	public: struct FILTER
 	{
 		QString User;
-		QString Base;
 
-		int Month;
-		int Day;
+		int Month = 0;
+		int Day = 0;
 	};
 
 	private:
+
+		mutable QMutex Synchronizer;
 
 		ApplicationCore* Core;
 
@@ -78,7 +118,7 @@ class PaymentWidget : public QWidget
 		QDate startDate;
 		QDate stopDate;
 
-		QMap<QString, bool> allGroups;
+		QList<QPair<QString, bool>> allGroups;
 
 		double singlePayment;
 		int iddleDelay;
@@ -92,7 +132,12 @@ class PaymentWidget : public QWidget
 
 	private:
 
-		QList<RECORD> filterRecords(const QList<RECORD>& List, const FILTER& Filter) const;
+		QHash<QString, QVector<QPair<QDateTime, ACTION>>> loadEvents(QSqlDatabase& Db);
+
+		static void appendCounters(RECORD& Record, ACTION Action);
+		static void appendCounters(STATPART& Record, const RECORD& Action);
+
+		static QString formatInfo(const STATPART& Record);
 
 	private slots:
 
@@ -100,18 +145,23 @@ class PaymentWidget : public QWidget
 		void optionsButtonClicked(void);
 
 		void searchTextChanged(const QString& Text);
+		void recordsDataLoaded(const QList<RECORD>& Data);
+
+		void selectionChanged(void);
+
+		void refreshData(void);
 
 	public slots:
 
-		void refreshData(const QDate& From, const QDate& To);
-
 		void setParameters(const QDate& Start, const QDate& Stop,
-					    const QMap<QString, bool>& Groups,
+					    const QList<QPair<QString, bool>>& Groups,
 					    double Payment, bool Refresh, int Delay);
 
 	signals:
 
 		void onDetailsUpdate(const QString&);
+
+		void onDataReloaded(const QList<RECORD>&);
 
 };
 

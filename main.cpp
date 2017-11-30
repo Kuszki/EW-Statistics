@@ -34,6 +34,8 @@ int main(int argc, char *argv[])
 	qRegisterMetaType<QList<DBINFO>>("QList<DBINFO>");
 	qRegisterMetaType<QMap<QString,bool>>("QMap<QString,bool>");
 
+	qRegisterMetaType<QList<PaymentWidget::RECORD>>("QList<RECORD>");
+
 	a.setApplicationName("EW-Statistics");
 	a.setOrganizationName("Łukasz \"Kuszki\" Dróżdż");
 	a.setOrganizationDomain("https://github.com/Kuszki");

@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
- *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
+ *  Firebird database editor                                               *
+ *  Copyright (C) 2016  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
  *  it under the terms of the GNU General Public License as published by   *
@@ -18,59 +18,45 @@
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef PAYMENTDIALOG_HPP
-#define PAYMENTDIALOG_HPP
+#include "connectdialog.hpp"
+#include "ui_connectdialog.h"
 
-#include <QStandardItemModel>
-#include <QDialogButtonBox>
-#include <QAbstractButton>
-#include <QStandardItem>
-#include <QPushButton>
-#include <QDialog>
-
-namespace Ui
+ConnectDialog::ConnectDialog(QWidget *Parent)
+: QDialog(Parent), ui(new Ui::ConnectDialog)
 {
-	class PaymentDialog;
+	ui->setupUi(this); ui->buttonBox->button(QDialogButtonBox::Open)->setEnabled(false);
 }
 
-class PaymentDialog : public QDialog
+ConnectDialog::~ConnectDialog(void)
 {
-		Q_OBJECT
+	delete ui;
+}
 
-	private:
+void ConnectDialog::edited(void)
+{
+	ui->buttonBox->button(QDialogButtonBox::Open)->setEnabled(
+				!ui->User->text().isEmpty() &&
+				!ui->Password->text().isEmpty());
+}
 
-		Ui::PaymentDialog* ui;
+void ConnectDialog::accept(void)
+{
+	setEnabled(false);
 
-	public:
+	emit onAccept(ui->User->text(), ui->Password->text());
+}
 
-		explicit PaymentDialog(QWidget* Parent = nullptr);
-		virtual ~PaymentDialog(void) override;
+void ConnectDialog::reject(void)
+{
+	ui->Password->clear(); QDialog::reject();
+}
 
-		QList<QPair<QString, bool>> getGroups(void) const;
+void ConnectDialog::refused(const QString& Error)
+{
+	QMessageBox::critical(this, tr("Error"), Error); setEnabled(true);
+}
 
-	public slots:
-
-		virtual void accept(void) override;
-
-		void setParameters(const QDate& Start, const QDate& Stop,
-					    const QList<QPair<QString, bool>>& Groups,
-					    double Payment, int Delay);
-
-	private slots:
-
-		void dialogButtonClicked(QAbstractButton* Button);
-
-		void startDateChanged(const QDate& Date);
-		void stopDateChanged(const QDate& Date);
-
-		void iddleSpinChanged(int Value);
-
-	signals:
-
-		void onDialogAccepted(const QDate&, const QDate&,
-						  const QList<QPair<QString, bool>>&,
-						  double, bool, int);
-
-};
-
-#endif // PAYMENTDIALOG_HPP
+void ConnectDialog::connected(bool OK)
+{
+	if (!OK) return; setEnabled(true); QDialog::accept();
+}
