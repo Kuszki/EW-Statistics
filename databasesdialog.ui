@@ -14,7 +14,8 @@
    <string>Databases list</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="format-justify-fill"/>
+   <iconset theme="format-justify-fill">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="3">
@@ -67,6 +68,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tableView</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>removeButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

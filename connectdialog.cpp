@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  Firebird database editor                                               *
+ *  Compute various statistics for EWMAPA software                         *
  *  Copyright (C) 2016  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -37,6 +37,11 @@ void ConnectDialog::edited(void)
 	ui->buttonBox->button(QDialogButtonBox::Open)->setEnabled(
 				!ui->User->text().isEmpty() &&
 				!ui->Password->text().isEmpty());
+}
+
+void ConnectDialog::open(void)
+{
+	QDialog::open(); ui->User->setFocus();
 }
 
 void ConnectDialog::accept(void)

@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
+ *  Compute various statistics for EWMAPA software                         *
  *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -20,7 +20,11 @@
 #ifndef PAYMENTWIDGET_HPP
 #define PAYMENTWIDGET_HPP
 
+#include <QPrintPreviewDialog>
+#include <QTextDocument>
+#include <QPrintDialog>
 #include <QMutexLocker>
+#include <QPrinter>
 #include <QWidget>
 #include <QDebug>
 
@@ -95,7 +99,6 @@ class PaymentWidget : public QWidget
 		int SegmentsMOD = 0;
 		int SegmentsDEL = 0;
 
-		double Payment = 0.0;
 		unsigned Time = 0;
 	};
 
@@ -137,12 +140,15 @@ class PaymentWidget : public QWidget
 		static void appendCounters(RECORD& Record, ACTION Action);
 		static void appendCounters(STATPART& Record, const RECORD& Action);
 
-		static QString formatInfo(const STATPART& Record);
+		static QString formatInfo(const STATPART& Record, double perHour);
+		static QString tabledInfo(const STATPART& Record, double perHour);
+		static QString formatInfo(const QList<RECORD>& Records, double perHour);
 
 	private slots:
 
 		void refreshButtonClicked(void);
 		void optionsButtonClicked(void);
+		void printButtonClicked(void);
 
 		void searchTextChanged(const QString& Text);
 		void recordsDataLoaded(const QList<RECORD>& Data);
@@ -160,6 +166,7 @@ class PaymentWidget : public QWidget
 	signals:
 
 		void onDetailsUpdate(const QString&);
+		void onDetailsRemove(void);
 
 		void onDataReloaded(const QList<RECORD>&);
 

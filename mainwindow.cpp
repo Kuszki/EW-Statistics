@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
+ *  Compute various statistics for EWMAPA software                         *
  *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -30,7 +30,10 @@ MainWindow::MainWindow(QWidget* Parent)
 
 	About = new AboutDialog(this);
 
-	Details = new QLabel(this);
+	Details = new QTextBrowser(this);
+
+	Details->setWordWrapMode(QTextOption::NoWrap);
+	Details->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	Core->moveToThread(&Thread);
 
@@ -49,6 +52,7 @@ MainWindow::MainWindow(QWidget* Parent)
 	Settings.endGroup();
 
 	connect(Payments, &PaymentWidget::onDetailsUpdate, this, &MainWindow::updateDetailsInfo);
+	connect(Payments, &PaymentWidget::onDetailsRemove, this, &MainWindow::removeDetailsInfo);
 
 	connect(ui->actionAbout, &QAction::triggered, About, &AboutDialog::open);
 	connect(ui->actionDatabases, &QAction::triggered, this, &MainWindow::databasesActionClicked);
@@ -93,7 +97,13 @@ void MainWindow::appendModule(QWidget* Module)
 void MainWindow::updateDetailsInfo(const QString& Info)
 {
 	if (Info.isEmpty()) Details->setVisible(false);
-	else Details->setText(Info);
+	else
+	{
+		Details->setText(Info);
+		Details->setVisible(true);
+	}
+
+	Details->setMinimumWidth(Details->sizeHint().width());
 }
 
 void MainWindow::removeDetailsInfo(void)
@@ -120,7 +130,7 @@ void MainWindow::connectActionClicked(void)
 }
 
 void MainWindow::databasesActionClicked(void)
-{	
+{
 	DatabasesDialog* Dialog = new DatabasesDialog(Core->getSavedDatabases(), this);
 
 	connect(Dialog, &DatabasesDialog::onDialogAccepted, Core, &ApplicationCore::saveDatabasesList);

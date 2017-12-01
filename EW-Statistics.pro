@@ -18,7 +18,7 @@
 #*                                                                         *
 #* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-QT			+=	core gui widgets concurrent sql
+QT			+=	core gui widgets concurrent sql printsupport
 
 TARGET		=	EW-Statistics
 TEMPLATE		=	app

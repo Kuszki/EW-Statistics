@@ -29,25 +29,42 @@
         <property name="text">
          <string>Date from</string>
         </property>
+        <property name="buddy">
+         <cstring>startDate</cstring>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QDateEdit" name="startDate"/>
+       <widget class="QDateEdit" name="startDate">
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="stopLabel">
         <property name="text">
          <string>Date to</string>
         </property>
+        <property name="buddy">
+         <cstring>stopDate</cstring>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QDateEdit" name="stopDate"/>
+       <widget class="QDateEdit" name="stopDate">
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="paymentLabel">
         <property name="text">
          <string>Payment</string>
+        </property>
+        <property name="buddy">
+         <cstring>paymentSpin</cstring>
         </property>
        </widget>
       </item>
@@ -65,6 +82,9 @@
        <widget class="QLabel" name="iddleLabel">
         <property name="text">
          <string>Iddle perioid</string>
+        </property>
+        <property name="buddy">
+         <cstring>iddleSpin</cstring>
         </property>
        </widget>
       </item>
@@ -118,6 +138,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>startDate</tabstop>
+  <tabstop>stopDate</tabstop>
+  <tabstop>paymentSpin</tabstop>
+  <tabstop>iddleSpin</tabstop>
+  <tabstop>listView</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

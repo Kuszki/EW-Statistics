@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
+ *  Compute various statistics for EWMAPA software                         *
  *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -21,9 +21,9 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include <QTextBrowser>
 #include <QDockWidget>
 #include <QMainWindow>
-#include <QLabel>
 
 #include "commonstructures.hpp"
 #include "databasesdialog.hpp"
@@ -50,7 +50,7 @@ class MainWindow : public QMainWindow
 		AboutDialog* About;
 
 		Ui::MainWindow* ui;
-		QLabel* Details;
+		QTextBrowser* Details;
 
 		QThread Thread;
 

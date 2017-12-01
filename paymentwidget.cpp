@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
+ *  Compute various statistics for EWMAPA software                         *
  *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -31,6 +31,9 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 
 	ui->setupUi(this); QSet<QString> Used;
 
+	ui->printButton->setEnabled(false);
+	ui->previewButton->setEnabled(false);
+
 	QSettings Settings("EW-Statistics");
 
 	Settings.beginGroup("Payments");
@@ -56,7 +59,6 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 	{
 		allGroups.append({ Key, false }); Used.insert(Key);
 	}
-
 
 	connect(this, &PaymentWidget::onDataReloaded, this, &PaymentWidget::recordsDataLoaded);
 }
@@ -332,7 +334,10 @@ void PaymentWidget::appendCounters(PaymentWidget::RECORD& Record, PaymentWidget:
 
 void PaymentWidget::appendCounters(PaymentWidget::STATPART& Record, const PaymentWidget::RECORD& Action)
 {
-	const unsigned Time = Record.Start.secsTo(Record.Stop);
+	const unsigned Time = Action.Start.secsTo(Action.Stop);
+
+	if (Record.Start.isNull()) Record.Start = Action.Start;
+	if (Record.Stop.isNull()) Record.Stop = Action.Stop;
 
 	Record.ObjectsADD += Action.ObjectsADD;
 	Record.ObjectsMOD += Action.ObjectsMOD;
@@ -349,17 +354,165 @@ void PaymentWidget::appendCounters(PaymentWidget::STATPART& Record, const Paymen
 	Record.Start = qMin(Record.Start, Action.Start);
 	Record.Stop = qMax(Record.Stop, Action.Stop);
 
-	Record.Payment += (Time / 3600.0) * singlePayment;
 	Record.Time += Time;
 }
 
-QString PaymentWidget::formatInfo(const PaymentWidget::STATPART& Record)
+QString PaymentWidget::formatInfo(const PaymentWidget::STATPART& Record, double perHour)
 {
+	const QString Time = QString("%1:%2:%3")
+					 .arg(Record.Time / 3600, 2, 10, QChar('0'))
+					 .arg((Record.Time / 60) % 60, 2, 10, QChar('0'))
+					 .arg(Record.Time % 60, 2, 10, QChar('0'));
+
+	const QString Payment = QString::number((Record.Time / 3600.0) * perHour, 'f', 2);
+
+	const unsigned Days = Record.Start.daysTo(Record.Stop);
+	const unsigned Avg = Record.Time / (Days ? Days : 1);
+
+	const QString Daily = QString("%1:%2:%3")
+					  .arg(Avg / 3600, 2, 10, QChar('0'))
+					  .arg((Avg / 60) % 60, 2, 10, QChar('0'))
+					  .arg(Avg % 60, 2, 10, QChar('0'));
+
 	return tr(
-		"<h1>User: %1</h1>"
-		"<table>"
-		"<th>"
-		"<tr>");
+		"<h2>User: %1</h2>"
+		"<ul>"
+		"<li>Added objects: %2</li>"
+		"<li>Modified objects: %3</li>"
+		"<li>Removed objects: %4</li>"
+		"</ul>"
+		"<ul>"
+		"<li>Added segments: %5</li>"
+		"<li>Modified segments: %6</li>"
+		"<li>Removed segments: %7</li>"
+		"</ul>"
+		"<ul>"
+		"<li>Added texts: %8</li>"
+		"<li>Modified texts: %9</li>"
+		"<li>Removed texts: %10</li>"
+		"</ul>"
+		"<h4>Total time: %11</h4>"
+		"<h4>Total payment: %12 PLN</h4>"
+		"<h4>Avg per day: %13</h4>")
+			.arg(Record.User)
+			.arg(Record.ObjectsADD)
+			.arg(Record.ObjectsMOD)
+			.arg(Record.ObjectsDEL)
+			.arg(Record.SegmentsADD)
+			.arg(Record.SegmentsMOD)
+			.arg(Record.SegmentsDEL)
+			.arg(Record.TextsADD)
+			.arg(Record.TextsMOD)
+			.arg(Record.TextsDEL)
+			.arg(Time)
+			.arg(Payment)
+			.arg(Daily);
+}
+
+QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double perHour)
+{
+	const QString Time = QString("%1:%2:%3")
+					 .arg(Record.Time / 3600, 2, 10, QChar('0'))
+					 .arg((Record.Time / 60) % 60, 2, 10, QChar('0'))
+					 .arg(Record.Time % 60, 2, 10, QChar('0'));
+
+	const QString Payment = QString::number((Record.Time / 3600.0) * perHour, 'f', 2);
+
+	const unsigned Days = Record.Start.daysTo(Record.Stop);
+	const unsigned Avg = Record.Time / (Days ? Days : 1);
+
+	const QString Daily = QString("%1:%2:%3")
+					  .arg(Avg / 3600, 2, 10, QChar('0'))
+					  .arg((Avg / 60) % 60, 2, 10, QChar('0'))
+					  .arg(Avg % 60, 2, 10, QChar('0'));
+
+	return tr(
+		"<h2>User: %1</h2>"
+		"<table border='0' width='100%' cellspacing='5' valign='middle'>"
+		"<tr>"
+		"<td><ul>"
+		"<li>Added objects: %2</li>"
+		"<li>Modified objects: %3</li>"
+		"<li>Removed objects: %4</li>"
+		"</ul></td>"
+		"<td><h4>Total time: %11</h4></td>"
+		"</tr>"
+		"<tr>"
+		"<td><ul>"
+		"<li>Added segments: %5</li>"
+		"<li>Modified segments: %6</li>"
+		"<li>Removed segments: %7</li>"
+		"</ul></td>"
+		"<td><h4>Total payment: %12 PLN</h4></td>"
+		"</tr>"
+		"<tr>"
+		"<td><ul>"
+		"<li>Added texts: %8</li>"
+		"<li>Modified texts: %9</li>"
+		"<li>Removed texts: %10</li>"
+		"</ul></td>"
+		"<td><h4>Avg per day: %13</h4></td>"
+		"</tr>"
+		"</table>")
+			.arg(Record.User)
+			.arg(Record.ObjectsADD)
+			.arg(Record.ObjectsMOD)
+			.arg(Record.ObjectsDEL)
+			.arg(Record.SegmentsADD)
+			.arg(Record.SegmentsMOD)
+			.arg(Record.SegmentsDEL)
+			.arg(Record.TextsADD)
+			.arg(Record.TextsMOD)
+			.arg(Record.TextsDEL)
+			.arg(Time)
+			.arg(Payment)
+			.arg(Daily);
+}
+
+QString PaymentWidget::formatInfo(const QList<PaymentWidget::RECORD>& Records, double perHour)
+{
+	QString Output;
+
+	Output.append("<table border='5' width='100%' cellspacing='0'>");
+
+	Output.append(tr(
+		"<tr>"
+		"<th>Date</th>"
+		"<th>From</th>"
+		"<th>To</th>"
+		"<th>Time</th>"
+		"<th>Payment</th>"
+		"</tr>"));
+
+	for (const auto& R : Records)
+	{
+		const unsigned Time = R.Start.secsTo(R.Stop);
+
+		const QString Formated = QString("%1:%2:%3")
+							.arg(Time / 3600, 2, 10, QChar('0'))
+							.arg((Time / 60) % 60, 2, 10, QChar('0'))
+							.arg(Time % 60, 2, 10, QChar('0'));
+
+		const double Payment = (Time / 3600.0) * perHour;
+
+		Output.append(QString(
+			"<tr>"
+			"<td>%1</td>"
+			"<td>%2</td>"
+			"<td>%3</td>"
+			"<td>%4</td>"
+			"<td>%5</td>"
+			"</tr>")
+				    .arg(R.Start.date().toString(Qt::DefaultLocaleShortDate))
+				    .arg(R.Start.toString(Qt::DefaultLocaleShortDate))
+				    .arg(R.Stop.toString(Qt::DefaultLocaleShortDate))
+				    .arg(Formated)
+				    .arg(Payment, 0, 'f', 2));
+	}
+
+	Output.append("</table>");
+
+	return Output;
 }
 
 void PaymentWidget::refreshButtonClicked(void)
@@ -380,9 +533,99 @@ void PaymentWidget::optionsButtonClicked(void)
 	Dialog->open();
 }
 
+void PaymentWidget::printButtonClicked(void)
+{
+	const bool Preview = sender() == ui->previewButton;
+
+	const auto Selected = ui->treeView->selectionModel()->selectedRows();
+	const auto Model = qobject_cast<RecordModel*>(ui->treeView->model());
+
+	if (Selected.isEmpty()) { emit onDetailsRemove(); return; }
+
+	const auto List = Model->getUids(Selected);
+
+	QPrinter Printer(QPrinter::HighResolution);
+	QPrintPreviewDialog PreviewDialog(&Printer, this);
+	QPrintDialog PrintDialog(&Printer, this);
+
+	QHash<QString, QList<RECORD>> Groups;
+	QHash<QString, STATPART> Stats;
+	QString Output;
+
+	Output.reserve(Records.size() * 150);
+	Printer.setFullPage(true);
+
+	for (const auto& i : List)
+	{
+		const auto& R = Records[i];
+
+		Stats[R.User].User = R.User;
+
+		Groups[R.User].append(R);
+		appendCounters(Stats[R.User], R);
+	}
+
+	QtConcurrent::blockingMap(Groups,
+	[] (QList<RECORD>& List) -> void
+	{
+		std::stable_sort(List.begin(), List.end(),
+		[] (const auto& A, const auto& B) -> bool
+		{
+			return A.Start < B.Start;
+		});
+	});
+
+	Output.append(tr("<h1>Report from %1 to %2</h1><hr size='5'>")
+			    .arg(startDate.toString())
+			    .arg(stopDate.toString()));
+
+	Output.append(tr("<p><b>Settings:</b> Max iddle time = %1 min; Payment per hour = %2 PLN</p>")
+			    .arg(iddleDelay)
+			    .arg(singlePayment, 0, 'f', 2));
+
+	for (const auto& User : Stats.keys())
+	{
+		Output.append("<hr size='5'>");
+		Output.append(tabledInfo(Stats[User], singlePayment));
+		Output.append(formatInfo(Groups[User], singlePayment));
+	}
+
+	QTextDocument Doc;
+	Doc.setHtml(Output);
+
+	connect(&PreviewDialog, &QPrintPreviewDialog::paintRequested,
+		   &Doc, &QTextDocument::print);
+
+	if (Preview)
+	{
+		PreviewDialog.exec();
+	}
+	else if (PrintDialog.exec())
+	{
+		Doc.print(&Printer);
+	}
+}
+
 void PaymentWidget::searchTextChanged(const QString& Text)
 {
-	// TODO
+	auto Model = qobject_cast<RecordModel*>(ui->treeView->model());
+
+	for (int i = 0; i < Records.size(); ++i)
+	{
+		const auto Index = Model->index(i);
+		const auto Data = Model->fullData(Index);
+
+		bool OK = Text.isEmpty();
+
+		if (!OK) for (int j = 0; j < 2; ++j)
+		{
+			const QString Col = Data.value(j).toString();
+
+			OK = OK || Col.contains(Text, Qt::CaseInsensitive);
+		}
+
+		ui->treeView->setRowHidden(Index.row(), Index.parent(), !OK);
+	}
 }
 
 void PaymentWidget::recordsDataLoaded(const QList<PaymentWidget::RECORD>& Data)
@@ -411,11 +654,11 @@ void PaymentWidget::recordsDataLoaded(const QList<PaymentWidget::RECORD>& Data)
 
 		Record[0] = Row.User;
 		Record[1] = Row.Start.date();
-		Record[2] = Row.Start.date().toString("MMMM yyyy");
+		Record[2] = Row.Start.date().toString("MM.yyyy");
 		Record[3] = Row.Start;
 		Record[4] = Row.Stop;
 		Record[5] = Formated;
-		Record[6] = QString::number(Payment, 'f', 2);
+		Record[6] = QString::number(Payment, 'f', 2).append(tr(" PLN"));
 
 		Model->addItem(i, Record);
 	}
@@ -438,12 +681,29 @@ void PaymentWidget::recordsDataLoaded(const QList<PaymentWidget::RECORD>& Data)
 	setEnabled(true);
 
 	Records = Data;
+
+	connect(ui->treeView->selectionModel(),
+		   &QItemSelectionModel::selectionChanged,
+		   this, &PaymentWidget::selectionChanged);
 }
 
 void PaymentWidget::selectionChanged(void)
 {
 	const auto Selected = ui->treeView->selectionModel()->selectedRows();
 	const auto Model = qobject_cast<RecordModel*>(ui->treeView->model());
+
+	if (Selected.isEmpty())
+	{
+		ui->printButton->setEnabled(false);
+		ui->previewButton->setEnabled(false);
+
+		emit onDetailsRemove(); return;
+	}
+	else
+	{
+		ui->printButton->setEnabled(true);
+		ui->previewButton->setEnabled(true);
+	}
 
 	const auto List = Model->getUids(Selected);
 
@@ -456,10 +716,16 @@ void PaymentWidget::selectionChanged(void)
 		appendCounters(Stats[Rec.User], Rec);
 	}
 
-	for (auto i = Stats.constBegin(); i != Stats.constEnd(); ++i)
+	for (auto i = Stats.begin(); i != Stats.end(); ++i)
 	{
+		i.value().User = i.key();
 
+		const QString Part = formatInfo(i.value(), singlePayment);
+
+		Infos.append(Part);
 	}
+
+	emit onDetailsUpdate(Infos.join("<hr size='5'>"));
 }
 
 void PaymentWidget::refreshData(void)
@@ -493,7 +759,7 @@ void PaymentWidget::refreshData(void)
 	});
 
 	for (auto i = Data.constBegin(); i != Data.constEnd(); ++i)
-	{		
+	{
 		const auto& User = i.key();
 		const auto& List = i.value();
 
