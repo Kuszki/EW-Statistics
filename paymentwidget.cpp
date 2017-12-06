@@ -411,12 +411,14 @@ QString PaymentWidget::formatInfo(const PaymentWidget::STATPART& Record, double 
 
 QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double perHour)
 {
+	const double Hours = Record.Time / 3600.0;
+
 	const QString Time = QString("%1:%2:%3")
 					 .arg(Record.Time / 3600, 2, 10, QChar('0'))
 					 .arg((Record.Time / 60) % 60, 2, 10, QChar('0'))
 					 .arg(Record.Time % 60, 2, 10, QChar('0'));
 
-	const QString Payment = QString::number((Record.Time / 3600.0) * perHour, 'f', 2);
+	const QString Payment = QString::number(Hours * perHour, 'f', 2);
 
 	const unsigned Days = Record.Start.daysTo(Record.Stop);
 	const unsigned Avg = Record.Time / (Days ? Days : 1);
@@ -427,31 +429,40 @@ QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double 
 					  .arg(Avg % 60, 2, 10, QChar('0'));
 
 	return tr(
-		"<h2>User: %1</h2>"
-		"<table border='0' width='100%' cellspacing='5' valign='middle'>"
+		"<table border='0' width='100%' cellspacing='00' valign='middle'>"
 		"<tr>"
-		"<td><ul>"
-		"<li>Added objects: %2</li>"
-		"<li>Modified objects: %3</li>"
-		"<li>Removed objects: %4</li>"
-		"</ul></td>"
-		"<td><h4>Total time: %11</h4></td>"
-		"</tr>"
-		"<tr>"
-		"<td><ul>"
-		"<li>Added segments: %5</li>"
-		"<li>Modified segments: %6</li>"
-		"<li>Removed segments: %7</li>"
-		"</ul></td>"
+		"<td><h2>User: %1</h2></td>"
 		"<td><h4>Total payment: %12 PLN</h4></td>"
+		"<td><h4>Total time: %11</h4></td>"
+		"<td><h4>Avg time per day: %13</h4></td>"
 		"</tr>"
+		"</table>"
+		"<table border='0' width='100%' cellspacing='15' valign='middle'>"
 		"<tr>"
-		"<td><ul>"
-		"<li>Added texts: %8</li>"
-		"<li>Modified texts: %9</li>"
-		"<li>Removed texts: %10</li>"
-		"</ul></td>"
-		"<td><h4>Avg per day: %13</h4></td>"
+		"<td>"
+		"<ul>"
+		"<li>Added objects: <b>%2</b></li>"
+		"<li>Modified objects: <b>%3</b></li>"
+		"<li>Removed objects: <b>%4</b></li>"
+		"<li><p>Avg per hour: <b>%14</b></p></li>"
+		"</ul>"
+		"</td>"
+		"<td>"
+		"<ul>"
+		"<li>Added segments: <b>%5</b></li>"
+		"<li>Modified segments: <b>%6</b></li>"
+		"<li>Removed segments: <b>%7</b></li>"
+		"<li><p>Avg per hour: <b>%15</b></p></li>"
+		"</ul>"
+		"</td>"
+		"<td>"
+		"<ul>"
+		"<li>Added texts: <b>%8</b></li>"
+		"<li>Modified texts: <b>%9</b></li>"
+		"<li>Removed texts: <b>%10</b></li>"
+		"<li><p>Avg per hour: <b>%16</b></p></li>"
+		"</ul>"
+		"</td>"
 		"</tr>"
 		"</table>")
 			.arg(Record.User)
@@ -466,7 +477,10 @@ QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double 
 			.arg(Record.TextsDEL)
 			.arg(Time)
 			.arg(Payment)
-			.arg(Daily);
+			.arg(Daily)
+			.arg(int((Record.ObjectsADD + Record.ObjectsMOD + Record.ObjectsDEL) / Hours))
+			.arg(int((Record.SegmentsADD + Record.SegmentsMOD + Record.SegmentsDEL) / Hours))
+			.arg(int((Record.TextsADD + Record.TextsMOD + Record.TextsDEL) / Hours));
 }
 
 QString PaymentWidget::formatInfo(const QList<PaymentWidget::RECORD>& Records, double perHour)
@@ -501,7 +515,7 @@ QString PaymentWidget::formatInfo(const QList<PaymentWidget::RECORD>& Records, d
 			"<td>%2</td>"
 			"<td>%3</td>"
 			"<td>%4</td>"
-			"<td>%5</td>"
+			"<td>%5 PLN</td>"
 			"</tr>")
 				    .arg(R.Start.date().toString(Qt::DefaultLocaleShortDate))
 				    .arg(R.Start.toString(Qt::DefaultLocaleShortDate))
