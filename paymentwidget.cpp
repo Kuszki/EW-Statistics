@@ -604,9 +604,12 @@ void PaymentWidget::printButtonClicked(void)
 		Output.append(formatInfo(Groups[User], singlePayment));
 	}
 
-	QTextDocument Doc;
+	QTextDocument Doc; QFont Font = Doc.defaultFont();
+
+	Font.setPointSize(9);
 
 	Doc.setMetaInformation(QTextDocument::DocumentTitle, tr("Report"));
+	Doc.setDefaultFont(Font);
 	Doc.setHtml(Output);
 
 	connect(&PreviewDialog, &QPrintPreviewDialog::paintRequested,
