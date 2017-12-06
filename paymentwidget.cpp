@@ -591,6 +591,8 @@ void PaymentWidget::printButtonClicked(void)
 	}
 
 	QTextDocument Doc;
+
+	Doc.setMetaInformation(QTextDocument::DocumentTitle, tr("Report"));
 	Doc.setHtml(Output);
 
 	connect(&PreviewDialog, &QPrintPreviewDialog::paintRequested,
