@@ -429,7 +429,7 @@ QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double 
 					  .arg(Avg % 60, 2, 10, QChar('0'));
 
 	return tr(
-		"<table border='0' width='100%' cellspacing='00' valign='middle'>"
+		"<table border='0' width='100%' cellspacing='0' valign='middle'>"
 		"<tr>"
 		"<td><h2>User: %1</h2></td>"
 		"<td><h4>Total payment: %12 PLN</h4></td>"
@@ -437,7 +437,7 @@ QString PaymentWidget::tabledInfo(const PaymentWidget::STATPART& Record, double 
 		"<td><h4>Avg time per day: %13</h4></td>"
 		"</tr>"
 		"</table>"
-		"<table border='0' width='100%' cellspacing='15' valign='middle'>"
+		"<table border='0' width='100%' cellspacing='5' valign='middle'>"
 		"<tr>"
 		"<td>"
 		"<ul>"
@@ -606,7 +606,7 @@ void PaymentWidget::printButtonClicked(void)
 
 	QTextDocument Doc; QFont Font = Doc.defaultFont();
 
-	Font.setPointSize(9);
+	Font.setPointSize(7);
 
 	Doc.setMetaInformation(QTextDocument::DocumentTitle, tr("Report"));
 	Doc.setDefaultFont(Font);
