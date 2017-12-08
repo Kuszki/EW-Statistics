@@ -24,6 +24,7 @@
 #include <QTextDocument>
 #include <QPrintDialog>
 #include <QMutexLocker>
+#include <QFileDialog>
 #include <QPrinter>
 #include <QWidget>
 #include <QDebug>
@@ -149,6 +150,7 @@ class PaymentWidget : public QWidget
 		void refreshButtonClicked(void);
 		void optionsButtonClicked(void);
 		void printButtonClicked(void);
+		void saveButtonClicked(void);
 
 		void searchTextChanged(const QString& Text);
 		void recordsDataLoaded(const QList<RECORD>& Data);

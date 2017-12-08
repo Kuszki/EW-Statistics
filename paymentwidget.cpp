@@ -31,6 +31,7 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 
 	ui->setupUi(this); QSet<QString> Used;
 
+	ui->saveButton->setEnabled(false);
 	ui->printButton->setEnabled(false);
 	ui->previewButton->setEnabled(false);
 
@@ -625,6 +626,48 @@ void PaymentWidget::printButtonClicked(void)
 	}
 }
 
+void PaymentWidget::saveButtonClicked(void)
+{
+	const auto Selected = ui->treeView->selectionModel()->selectedRows();
+	const auto Model = qobject_cast<RecordModel*>(ui->treeView->model());
+
+	const auto List = Model->getUids(Selected);
+
+	if (List.isEmpty()) return;
+
+	const QString Path = QFileDialog::getSaveFileName(this, tr("Save data"), QString(),
+											tr("CSV files (*.csv);;All files (*.*)"));
+
+	if (Path.isEmpty()) return;
+
+	QFile File(Path); QTextStream Stream(&File); QChar Sep(',');
+
+	if (!File.open(QFile::WriteOnly | QFile::Text)) return;
+
+	Stream << tr("User,Date,From,To,Time,Payment") << endl;
+
+	for (const auto& i : List)
+	{
+		const auto& R = Records[i];
+
+		const unsigned Time = R.Start.secsTo(R.Stop);
+
+		const QString Formated = QString("%1:%2:%3")
+							.arg(Time / 3600, 2, 10, QChar('0'))
+							.arg((Time / 60) % 60, 2, 10, QChar('0'))
+							.arg(Time % 60, 2, 10, QChar('0'));
+
+		const double Payment = (Time / 3600.0) * singlePayment;
+
+		Stream << R.User << Sep
+			  << R.Start.date().toString(Qt::DefaultLocaleShortDate) << Sep
+			  << R.Start.toString(Qt::DefaultLocaleShortDate) << Sep
+			  << R.Stop.toString(Qt::DefaultLocaleShortDate) << Sep
+			  << Formated << Sep
+			  << Payment << endl;
+	}
+}
+
 void PaymentWidget::searchTextChanged(const QString& Text)
 {
 	auto Model = qobject_cast<RecordModel*>(ui->treeView->model());
@@ -713,6 +756,7 @@ void PaymentWidget::selectionChanged(void)
 
 	if (Selected.isEmpty())
 	{
+		ui->saveButton->setEnabled(false);
 		ui->printButton->setEnabled(false);
 		ui->previewButton->setEnabled(false);
 
@@ -720,6 +764,7 @@ void PaymentWidget::selectionChanged(void)
 	}
 	else
 	{
+		ui->saveButton->setEnabled(true);
 		ui->printButton->setEnabled(true);
 		ui->previewButton->setEnabled(true);
 	}
