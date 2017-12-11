@@ -242,40 +242,45 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation>Szukaj</translation>
     </message>
     <message>
-        <location filename="paymentwidget.ui" line="67"/>
+        <location filename="paymentwidget.ui" line="45"/>
         <source>Print</source>
         <translation>Drukuj</translation>
     </message>
     <message>
-        <location filename="paymentwidget.ui" line="91"/>
+        <location filename="paymentwidget.ui" line="102"/>
         <source>Options</source>
         <translation>Opcje</translation>
     </message>
     <message>
-        <location filename="paymentwidget.ui" line="102"/>
+        <location filename="paymentwidget.ui" line="113"/>
+        <source>Export</source>
+        <translation>Eksportuj</translation>
+    </message>
+    <message>
+        <location filename="paymentwidget.ui" line="91"/>
         <source>Preview</source>
         <translation>Podgląd</translation>
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>User</source>
         <translation>Użytkownik</translation>
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>Month</source>
         <translation>Miesiąc</translation>
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>Day</source>
         <translation>Dzień</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="377"/>
+        <location filename="paymentwidget.cpp" line="378"/>
         <source>&lt;h2&gt;User: %1&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Added objects: %2&lt;/li&gt;&lt;li&gt;Modified objects: %3&lt;/li&gt;&lt;li&gt;Removed objects: %4&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Added segments: %5&lt;/li&gt;&lt;li&gt;Modified segments: %6&lt;/li&gt;&lt;li&gt;Removed segments: %7&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Added texts: %8&lt;/li&gt;&lt;li&gt;Modified texts: %9&lt;/li&gt;&lt;li&gt;Removed texts: %10&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Total time: %11&lt;/h4&gt;&lt;h4&gt;Total payment: %12 PLN&lt;/h4&gt;&lt;h4&gt;Avg per day: %13&lt;/h4&gt;</source>
         <oldsource>&lt;h2&gt;User: %1&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Added objects: %2&lt;/li&gt;&lt;li&gt;Modified objects: %3&lt;/li&gt;&lt;li&gt;Removed objects: %4&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Added segments: %5&lt;/li&gt;&lt;li&gt;Modified segments: %6&lt;/li&gt;&lt;li&gt;Removed segments: %7&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Added texts: %8&lt;/li&gt;&lt;li&gt;Modified texts: %9&lt;/li&gt;&lt;li&gt;Removed texts: %10&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Total time: %11&lt;/h4&gt;&lt;h4&gt;Total payment: %12&lt;/h4&gt;&lt;h4&gt;Avg per day: %13&lt;/h4&gt;</oldsource>
         <translation>&lt;h2&gt;Użytkownik: %1&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Dodane obiekty: %2&lt;/li&gt;&lt;li&gt;Zmienione obiekty: %3&lt;/li&gt;&lt;li&gt;Usunięte obiekty: %4&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Dodane segmenty: %5&lt;/li&gt;&lt;li&gt;Zmienione segmenty: %6&lt;/li&gt;&lt;li&gt;Usunięte segmenty: %7&lt;/li&gt;&lt;/ul&gt;&lt;ul&gt;&lt;li&gt;Dodane opisy: %8&lt;/li&gt;&lt;li&gt;Zmienione opisy: %9&lt;/li&gt;&lt;li&gt;Usunięte opisy: %10&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Całkowity czas pracy: %11&lt;/h4&gt;&lt;h4&gt;Należna zapłata: %12 PLN&lt;/h4&gt;&lt;h4&gt;Średni czas na dzień: %13&lt;/h4&gt;</translation>
@@ -286,53 +291,68 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation type="vanished">&lt;h2&gt;Użytkownik: %1&lt;/h2&gt;&lt;table border=&apos;0&apos; width=&apos;100%&apos; cellspacing=&apos;5&apos; valign=&apos;middle&apos;&gt;&lt;tr&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane obiekty: %2&lt;/li&gt;&lt;li&gt;Zmienione obiekty: %3&lt;/li&gt;&lt;li&gt;Usunięte obiekty: %4&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Całkowity czas pracy: %11&lt;/h4&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane segmenty: %5&lt;/li&gt;&lt;li&gt;Zmienione segmenty: %6&lt;/li&gt;&lt;li&gt;Usunięte segmenty: %7&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Należna zapłata: %12 PLN&lt;/h4&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane opisy: %8&lt;/li&gt;&lt;li&gt;Zmienione opisy: %9&lt;/li&gt;&lt;li&gt;Usunięte opisy: %10&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Średni czas na dzień: %13&lt;/h4&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="431"/>
+        <location filename="paymentwidget.cpp" line="432"/>
         <source>&lt;table border=&apos;0&apos; width=&apos;100%&apos; cellspacing=&apos;0&apos; valign=&apos;middle&apos;&gt;&lt;tr&gt;&lt;td&gt;&lt;h2&gt;User: %1&lt;/h2&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Total payment: %12 PLN&lt;/h4&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Total time: %11&lt;/h4&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Avg time per day: %13&lt;/h4&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&apos;0&apos; width=&apos;100%&apos; cellspacing=&apos;5&apos; valign=&apos;middle&apos;&gt;&lt;tr&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Added objects: &lt;b&gt;%2&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Modified objects: &lt;b&gt;%3&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Removed objects: &lt;b&gt;%4&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Avg per hour: &lt;b&gt;%14&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Added segments: &lt;b&gt;%5&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Modified segments: &lt;b&gt;%6&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Removed segments: &lt;b&gt;%7&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Avg per hour: &lt;b&gt;%15&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Added texts: &lt;b&gt;%8&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Modified texts: &lt;b&gt;%9&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Removed texts: &lt;b&gt;%10&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Avg per hour: &lt;b&gt;%16&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
         <translation>&lt;table border=&apos;0&apos; width=&apos;100%&apos; cellspacing=&apos;0&apos; valign=&apos;middle&apos;&gt;&lt;tr&gt;&lt;td&gt;&lt;h2&gt;%1&lt;/h2&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Należność: %12 PLN&lt;/h4&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Całkowity czas: %11&lt;/h4&gt;&lt;/td&gt;&lt;td&gt;&lt;h4&gt;Średnia na dzień: %13&lt;/h4&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;table border=&apos;0&apos; width=&apos;100%&apos; cellspacing=&apos;5&apos; valign=&apos;middle&apos;&gt;&lt;tr&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane obiekty: &lt;b&gt;%2&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Zmienione obiekty: &lt;b&gt;%3&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Usunięte obiekty: &lt;b&gt;%4&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Średnio na godzinę: &lt;b&gt;%14&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane segmenty: &lt;b&gt;%5&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Zmienione segmenty: &lt;b&gt;%6&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Usunięte segmenty: &lt;b&gt;%7&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Średnio na godzinę: &lt;b&gt;%15&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;td&gt;&lt;ul&gt;&lt;li&gt;Dodane opisy: &lt;b&gt;%8&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Zmienione opisy: &lt;b&gt;%9&lt;/b&gt;&lt;/li&gt;&lt;li&gt;Usunięte opisy: &lt;b&gt;%10&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;Średnio na godzinę: &lt;b&gt;%16&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="492"/>
+        <location filename="paymentwidget.cpp" line="493"/>
         <source>&lt;tr&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;From&lt;/th&gt;&lt;th&gt;To&lt;/th&gt;&lt;th&gt;Time&lt;/th&gt;&lt;th&gt;Payment&lt;/th&gt;&lt;/tr&gt;</source>
         <translation>&lt;tr&gt;&lt;th&gt;Data&lt;/th&gt;&lt;th&gt;Od&lt;/th&gt;&lt;th&gt;Do&lt;/th&gt;&lt;th&gt;Czas pracy&lt;/th&gt;&lt;th&gt;Należność&lt;/th&gt;&lt;/tr&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="592"/>
+        <location filename="paymentwidget.cpp" line="593"/>
         <source>&lt;h1&gt;Report from %1 to %2&lt;/h1&gt;&lt;hr size=&apos;5&apos;&gt;</source>
         <translation>&lt;h1&gt;Raport od %1 do %2&lt;/h1&gt;&lt;hr size=&apos;5&apos;&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="596"/>
+        <location filename="paymentwidget.cpp" line="597"/>
         <source>&lt;p&gt;&lt;b&gt;Settings:&lt;/b&gt; Max iddle time = %1 min; Payment per hour = %2 PLN&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;&lt;b&gt;Settings:&lt;/b&gt; Max iddle time = %1 min; Payment per hour = %2 PLN&lt;/p&gt;&lt;hr size=&apos;5&apos;&gt;</oldsource>
         <translation>&lt;p&gt;&lt;b&gt;Parametry:&lt;/b&gt; Maksymalny czas bezczynności = %1 min; Stawka za godzinę = %2 PLN&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="611"/>
+        <location filename="paymentwidget.cpp" line="612"/>
         <source>Report</source>
         <translation>Raport</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="638"/>
+        <source>Save data</source>
+        <translation>Zaspisz dane</translation>
+    </message>
+    <message>
+        <location filename="paymentwidget.cpp" line="639"/>
+        <source>CSV files (*.csv);;All files (*.*)</source>
+        <translation>Pliki CSV (*.csv);;Wszystkie pliki (*.*)</translation>
+    </message>
+    <message>
+        <location filename="paymentwidget.cpp" line="647"/>
+        <source>User,Date,From,To,Time,Payment</source>
+        <translation>Użytkownik,Data,Od,Do,Czas,Należność</translation>
+    </message>
+    <message>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>From</source>
         <translation>Od</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>To</source>
         <translation>Do</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>Hours</source>
         <translation>Czas pracy</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="654"/>
+        <location filename="paymentwidget.cpp" line="697"/>
         <source>Payment</source>
         <translation>Należność</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="680"/>
+        <location filename="paymentwidget.cpp" line="723"/>
         <source> PLN</source>
         <translation></translation>
     </message>
