@@ -29,8 +29,6 @@
 #include <QList>
 #include <QHash>
 
-#include <parallel/algorithm>
-
 #include <QtConcurrent>
 
 class RecordModel : public QAbstractItemModel
@@ -104,7 +102,10 @@ class RecordModel : public QAbstractItemModel
 			RecordObject* takeChild(RecordObject* Object);
 			RecordObject* takeChild(int Index);
 
+			QVector<GroupObject*> allGroups(void);
 			QVector<RecordObject*> getChilds(void);
+
+			QSet<int> allUids(void);
 
 			GroupObject* getParent(void) const;
 			RecordObject* getChild(int Index);
@@ -128,11 +129,14 @@ class RecordModel : public QAbstractItemModel
 
 		QHash<RecordObject*, GroupObject*> Parents;
 		QVector<RecordObject*> Objects;
+		QSet<GroupObject*> Roots;
 
 		GroupObject* Root = nullptr;
 
 		QStringList Header;
 		QStringList Groups;
+
+		bool selectGroups = false;
 
 		mutable QMutex Locker;
 
@@ -169,9 +173,9 @@ class RecordModel : public QAbstractItemModel
 
 		QModelIndexList getIndexes(const QModelIndex& Parent = QModelIndex()) const;
 
-		QList<int> getUids(const QModelIndexList& Selection) const;
+		QSet<int> getUids(const QModelIndexList& Selection) const;
 
-		QList<int> getUids(void) const;
+		QSet<int> getUids(void) const;
 
 		int getUid(const QModelIndex& Index) const;
 
@@ -188,6 +192,8 @@ class RecordModel : public QAbstractItemModel
 		QModelIndex index(int Index) const;
 
 		QModelIndex find(int Index, QVariant Data) const;
+
+		void setGroupsSelectable(bool Selectable);
 
 	protected:
 
