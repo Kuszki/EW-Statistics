@@ -728,6 +728,7 @@ void PaymentWidget::recordsDataLoaded(const QList<PaymentWidget::RECORD>& Data)
 	auto oldModel = ui->treeView->model();
 	auto oldSelect = ui->treeView->selectionModel();
 
+	Model->setGroupsSelectable(true);
 	ui->treeView->setModel(Model);
 
 	for (const auto& Group : allGroups) if (Group.second)
