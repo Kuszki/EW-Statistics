@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  Compute various statistics for EWMAPA software                         *
+ *  Firebird database editor                                               *
  *  Copyright (C) 2016  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -179,7 +179,9 @@ class RecordModel : public QAbstractItemModel
 
 		int getUid(const QModelIndex& Index) const;
 
-		bool saveToFile(const QString& Path, const QList<int>& Columns, const QModelIndexList& List, bool Names) const;
+		bool saveToFile(const QString& Path, const QList<int>& Columns,
+					 const QModelIndexList& List, bool Names,
+					 const QChar& Separator = QChar(',')) const;
 
 		bool removeItem(const QModelIndex& Index);
 

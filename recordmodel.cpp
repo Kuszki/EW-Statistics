@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  Compute various statistics for EWMAPA software                         *
+ *  Firebird database editor                                               *
  *  Copyright (C) 2016  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
@@ -542,33 +542,41 @@ int RecordModel::getUid(const QModelIndex& Index) const
 	return Object->getUid();
 }
 
-bool RecordModel::saveToFile(const QString& Path, const QList<int>& Columns, const QModelIndexList& List, bool Names) const
+bool RecordModel::saveToFile(const QString& Path, const QList<int>& Columns, const QModelIndexList& List, bool Names, const QChar& Separator) const
 {
-	QMutexLocker Synchronizer(&Locker);
+	QMutexLocker Synchronizer(&Locker); QSet<QStringList> Lines;
 
 	for (const auto& Index : Columns) if (Header.size() <= Index) return false;
 
 	QFile File(Path); if (!File.open(QFile::WriteOnly | QFile::Text)) return false;
 
 	QTextStream Stream(&File); const auto UIDS = getUids(List);
-
-	if (Names) for (const auto& ID : Columns)
-	{
-		Stream << Header[ID];
-
-		if (ID != Columns.last()) Stream << '\t';
-		else Stream << '\n';
-	}
+	QStringList Line; Line.reserve(Columns.size());
 
 	for (const auto Object : Objects) if (UIDS.contains(Object->getUid()))
 	{
 		for (const auto& ID : Columns)
 		{
-			Stream << Object->getField(ID).toString();
-
-			if (ID != Columns.last()) Stream << '\t';
-			else Stream << '\n';
+			Line.append(Object->getField(ID).toString());
 		}
+
+		Lines.insert(Line); Line.clear();
+	}
+
+	if (Names) for (const auto& ID : Columns)
+	{
+		Stream << Header[ID];
+
+		if (ID != Columns.last())
+		{
+			Stream << Separator;
+		}
+		else Stream << endl;
+	}
+
+	for (const auto& Line : Lines)
+	{
+		Stream << Line.join(Separator) << endl;
 	}
 
 	return true;

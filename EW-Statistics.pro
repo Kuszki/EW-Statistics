@@ -34,7 +34,8 @@ SOURCES		+=	main.cpp \
 				paymentwidget.cpp \
 				recordmodel.cpp \
 				paymentdialog.cpp \
-				connectdialog.cpp
+				connectdialog.cpp \
+    redactionwidget.cpp
 
 HEADERS		+=	commonstructures.hpp \
 				mainwindow.hpp \
@@ -44,14 +45,16 @@ HEADERS		+=	commonstructures.hpp \
 				paymentwidget.hpp \
 				recordmodel.hpp \
 				paymentdialog.hpp \
-				connectdialog.hpp
+				connectdialog.hpp \
+    redactionwidget.hpp
 
 FORMS		+=	mainwindow.ui \
 				aboutdialog.ui \
 				databasesdialog.ui \
 				paymentwidget.ui \
 				paymentdialog.ui \
-				connectdialog.ui
+				connectdialog.ui \
+    redactionwidget.ui
 
 LIBS			+=	-fopenmp
 
