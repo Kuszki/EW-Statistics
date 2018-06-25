@@ -35,6 +35,8 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 	ui->printButton->setEnabled(false);
 	ui->previewButton->setEnabled(false);
 
+	ui->progressBar->setVisible(false);
+
 	QSettings Settings("EW-Statistics");
 
 	Settings.beginGroup("Payments");
@@ -62,6 +64,9 @@ PaymentWidget::PaymentWidget(ApplicationCore* App, QWidget* Parent)
 	}
 
 	connect(this, &PaymentWidget::onDataReloaded, this, &PaymentWidget::recordsDataLoaded);
+	connect(this, &PaymentWidget::onProgressRename, ui->progressBar, &QProgressBar::setFormat);
+	connect(this, &PaymentWidget::onProgressStart, ui->progressBar, &QProgressBar::setRange);
+	connect(this, &PaymentWidget::onProgresUpdate, ui->progressBar, &QProgressBar::setValue);
 }
 
 PaymentWidget::~PaymentWidget(void)
@@ -532,7 +537,9 @@ QString PaymentWidget::formatInfo(const QList<PaymentWidget::RECORD>& Records, d
 
 void PaymentWidget::refreshButtonClicked(void)
 {
-	setEnabled(false); QtConcurrent::run(this, &PaymentWidget::refreshData);
+	setEnabled(false); ui->progressBar->setVisible(true);
+
+	QtConcurrent::run(this, &PaymentWidget::refreshData);
 }
 
 void PaymentWidget::optionsButtonClicked(void)
@@ -740,13 +747,13 @@ void PaymentWidget::recordsDataLoaded(const QList<PaymentWidget::RECORD>& Data)
 	delete oldModel;
 	delete oldSelect;
 
-	setEnabled(true);
-
 	Records = Data;
 
 	connect(ui->treeView->selectionModel(),
 		   &QItemSelectionModel::selectionChanged,
 		   this, &PaymentWidget::selectionChanged);
+
+	setEnabled(true); ui->progressBar->setVisible(false);
 }
 
 void PaymentWidget::selectionChanged(void)
@@ -802,6 +809,10 @@ void PaymentWidget::refreshData(void)
 
 	const int Secs = iddleDelay * 60;
 
+	emit onProgressRename(tr("Loading data"));
+	emit onProgressStart(0, 0);
+	emit onProgresUpdate(0);
+
 	for (int i = 0; i < Databases.size(); ++i)
 	{
 		const auto Part = loadEvents(Databases[i]);
@@ -816,11 +827,19 @@ void PaymentWidget::refreshData(void)
 		}
 	}
 
+	emit onProgressRename(tr("Sorting data"));
+	emit onProgressStart(0, 0);
+	emit onProgresUpdate(0);
+
 	QtConcurrent::blockingMap(Data,
 	[] (QVector<QPair<QDateTime, ACTION>>& List) -> void
 	{
 		std::stable_sort(List.begin(), List.end());
 	});
+
+	emit onProgressRename(tr("Computing data (%p%)"));
+	emit onProgressStart(0, Data.size());
+	emit onProgresUpdate(0); int Step(0);
 
 	for (auto i = Data.constBegin(); i != Data.constEnd(); ++i)
 	{
@@ -852,6 +871,8 @@ void PaymentWidget::refreshData(void)
 		}
 
 		if (Record.Start.secsTo(Record.Stop)) Records.append(Record);
+
+		emit onProgresUpdate(++Step);
 	}
 
 	emit onDataReloaded(Records);

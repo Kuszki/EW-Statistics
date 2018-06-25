@@ -37,8 +37,13 @@ RedactionWidget::RedactionWidget(ApplicationCore* App, QWidget* Parent)
 	Settings.endGroup();
 
 	ui->scaleCombo->setCurrentIndex(mapScale);
+	ui->saveButton->setEnabled(false);
+	ui->progressBar->setVisible(false);
 
 	connect(this, &RedactionWidget::onDataReloaded, this, &RedactionWidget::dataReloaded);
+	connect(this, &RedactionWidget::onProgressRename, ui->progressBar, &QProgressBar::setFormat);
+	connect(this, &RedactionWidget::onProgressStart, ui->progressBar, &QProgressBar::setRange);
+	connect(this, &RedactionWidget::onProgresUpdate, ui->progressBar, &QProgressBar::setValue);
 }
 
 RedactionWidget::~RedactionWidget(void)
@@ -352,20 +357,24 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 			{ -wX, wY }, { -wX, 0 }, { -wX, -wY }
 		};
 
-		Label.Point += Move.value(Label.Just - 1); Label.Just = 5;
+		Label.Point += Move.value(Label.Just - 1);
 
 		Label.Pol.append({ Label.Point.x() - wX, Label.Point.y() + wY });
 		Label.Pol.append({ Label.Point.x() + wX, Label.Point.y() + wY });
 		Label.Pol.append({ Label.Point.x() + wX, Label.Point.y() - wY });
 		Label.Pol.append({ Label.Point.x() - wX, Label.Point.y() - wY });
-		Label.Pol.append({ Label.Point.x() - wX, Label.Point.y() + wY });
 
-		for (auto& P : Label.Pol)
+		Label.Point = QPointF(); for (auto& P : Label.Pol)
 		{
 			QLineF Line(Org, P);
 			Line.setAngle(Line.angle() - Label.Ang);
 			P = Line.p2();
+
+			Label.Point += P / 4.0;
 		}
+
+		Label.Rad = qMax(wY, wX);
+		Label.Just = 5;
 	};
 
 	QtConcurrent::blockingMap(Labels, [&Layers, surfLabel] (QList<LABEL>& List) -> void
@@ -379,12 +388,17 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 
 QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& Labels) const
 {
-	QMutex Locker; QSet<QPair<double, double>> Res;
+	QMutex Locker; QSet<QPair<double, double>> Res; int Step(0);
 
-	QtConcurrent::blockingMap(Labels, [&Labels, &Res, &Locker] (const LABEL& Lab) -> void
+	emit onProgressRename(tr("Computing labels colisions (%p%)"));
+	emit onProgressStart(0, Labels.size()); emit onProgresUpdate(0);
+
+	QtConcurrent::blockingMap(Labels, [this, &Labels, &Res, &Locker, &Step] (const LABEL& Lab) -> void
 	{
 		for (const auto& Oth : Labels) if (Lab.Uid != Oth.Uid)
 		{
+			if ((Lab.Rad + Oth.Rad) < QLineF(Lab.Point, Oth.Point).length()) continue;
+
 			const QPolygonF Int = Lab.Pol.intersected(Oth.Pol);
 
 			if (!Int.isEmpty())
@@ -405,6 +419,10 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 				Locker.unlock();
 			}
 		}
+
+		Locker.lock();
+		emit onProgresUpdate(++Step);
+		Locker.unlock();
 	});
 
 	return Res;
@@ -412,7 +430,7 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 
 QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& Labels, const QList<QPointF>& Symbols) const
 {
-	QMutex Locker; QSet<QPair<double, double>> Res; const double Scl = smbScales.value(mapScale) / 2.0;
+	QMutex Locker; QSet<QPair<double, double>> Res; const double Scl = smbScales.value(mapScale) / 2.0; int Step(0);
 
 	static const auto pdistance = [] (const QLineF& L, const QPointF& P) -> double
 	{
@@ -431,10 +449,15 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 		else return INFINITY;
 	};
 
-	QtConcurrent::blockingMap(Labels, [&Symbols, &Res, &Locker, Scl] (const LABEL& Lab) -> void
+	emit onProgressRename(tr("Computing symbols colisions (%p%)"));
+	emit onProgressStart(0, Labels.size()); emit onProgresUpdate(0);
+
+	QtConcurrent::blockingMap(Labels, [this, &Symbols, &Res, &Locker, &Step, Scl] (const LABEL& Lab) -> void
 	{
 		for (const auto& Smb : Symbols)
 		{
+			if ((Lab.Rad + Scl) < QLineF(Lab.Point, Smb).length()) continue;
+
 			bool OK = Lab.Pol.containsPoint(Smb, Qt::OddEvenFill);
 
 			if (!OK) for (int i = 1; i < Lab.Pol.size(); ++i)
@@ -449,6 +472,10 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 				Locker.unlock();
 			}
 		}
+
+		Locker.lock();
+		emit onProgresUpdate(++Step);
+		Locker.unlock();
 	});
 
 	return Res;
@@ -456,7 +483,9 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 
 void RedactionWidget::refreshButtonClicked(void)
 {
-	setEnabled(false); QtConcurrent::run(this, &RedactionWidget::refreshData);
+	setEnabled(false); ui->progressBar->setVisible(true);
+
+	QtConcurrent::run(this, &RedactionWidget::refreshData);
 }
 
 void RedactionWidget::optionsButtonClicked(void)
@@ -514,7 +543,7 @@ void RedactionWidget::scaleValueChanged(int Scale)
 void RedactionWidget::dataReloaded(const QHash<QString, QSet<QPair<double, double>>>& Data)
 {
 	QStandardItemModel* Model = new QStandardItemModel(this);
-	const QStringList Bases = Data.keys();
+	const QStringList Bases = Data.keys(); int Count(0);
 
 	Model->setHorizontalHeaderLabels(
 	{
@@ -524,30 +553,41 @@ void RedactionWidget::dataReloaded(const QHash<QString, QSet<QPair<double, doubl
 	for (const auto& Db : Bases)
 	{
 		QStandardItem* Root = new QStandardItem(Db);
+		QSet<QStringList> Uniques;
 
 		for (const auto& P : Data[Db])
 		{
+			QStringList Current;
+
+			Current << QString::number(P.first, 'f', 3);
+			Current << QString::number(P.second, 'f', 3);
+
+			if (Uniques.contains(Current)) continue;
+			else Uniques.insert(Current);
+
 			QList<QStandardItem*> Row;
 
 			Row << new QStandardItem();
-			Row << new QStandardItem(QString::number(P.first, 'f', 3));
-			Row << new QStandardItem(QString::number(P.second, 'f', 3));
+			Row << new QStandardItem(Current[0]);
+			Row << new QStandardItem(Current[1]);
 
 			Root->appendRow(Row);
 		}
 
 		Model->appendRow(Root);
+		Count += Uniques.size();
 	}
 
 	auto oldModel = ui->treeView->model();
 	auto oldSelect = ui->treeView->selectionModel();
 
 	ui->treeView->setModel(Model);
+	ui->saveButton->setEnabled(Count > 0);
 
 	delete oldModel;
 	delete oldSelect;
 
-	setEnabled(true);
+	setEnabled(true); ui->progressBar->setVisible(false);
 }
 
 void RedactionWidget::refreshData(void)
@@ -557,6 +597,10 @@ void RedactionWidget::refreshData(void)
 	QList<LABEL> allLabels; QList<QPointF> allSmbs;
 
 	auto Databases = Core->getDatabases();
+
+	emit onProgressRename(tr("Loading data"));
+	emit onProgressStart(0, 0);
+	emit onProgresUpdate(0);
 
 	for (int i = 0; i < Databases.size(); ++i)
 	{

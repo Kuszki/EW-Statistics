@@ -171,6 +171,10 @@ class PaymentWidget : public QWidget
 
 		void onDataReloaded(const QList<RECORD>&);
 
+		void onProgressRename(const QString&) const;
+		void onProgressStart(int, int) const;
+		void onProgresUpdate(int) const;
+
 };
 
 #endif // PAYMENTWIDGET_HPP

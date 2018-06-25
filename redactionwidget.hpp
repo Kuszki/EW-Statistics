@@ -28,7 +28,7 @@
 #include "commonstructures.hpp"
 #include "applicationcore.hpp"
 #include "redactiondialog.hpp"
-
+#include <QDebug>
 namespace Ui
 {
 	class RedactionWidget;
@@ -98,6 +98,7 @@ class RedactionWidget : public QWidget
 		double Ang;
 
 		QPolygonF Pol;
+		double Rad;
 	};
 
 	private:
@@ -161,6 +162,10 @@ class RedactionWidget : public QWidget
 	signals:
 
 		void onDataReloaded(const QHash<QString, QSet<QPair<double, double>>>&);
+
+		void onProgressRename(const QString&) const;
+		void onProgressStart(int, int) const;
+		void onProgresUpdate(int) const;
 
 };
 

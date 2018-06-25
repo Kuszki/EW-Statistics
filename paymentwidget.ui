@@ -18,17 +18,6 @@
     <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="6">
-    <widget class="QToolButton" name="refreshButton">
-     <property name="text">
-      <string>Refresh</string>
-     </property>
-     <property name="icon">
-      <iconset theme="view-refresh">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLineEdit" name="searchEdit">
      <property name="placeholderText">
@@ -39,7 +28,18 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
+   <item row="1" column="7">
+    <widget class="QToolButton" name="refreshButton">
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+     <property name="icon">
+      <iconset theme="view-refresh">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
     <widget class="QToolButton" name="printButton">
      <property name="text">
       <string>Print</string>
@@ -50,7 +50,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -63,7 +63,29 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="7">
+   <item row="1" column="6">
+    <widget class="QToolButton" name="optionsButton">
+     <property name="text">
+      <string>Options</string>
+     </property>
+     <property name="icon">
+      <iconset theme="preferences-system">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QToolButton" name="previewButton">
+     <property name="text">
+      <string>Preview</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-print-preview">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="8">
     <widget class="QTreeView" name="treeView">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
@@ -86,28 +108,6 @@
     </widget>
    </item>
    <item row="1" column="3">
-    <widget class="QToolButton" name="previewButton">
-     <property name="text">
-      <string>Preview</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-print-preview">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5">
-    <widget class="QToolButton" name="optionsButton">
-     <property name="text">
-      <string>Options</string>
-     </property>
-     <property name="icon">
-      <iconset theme="preferences-system">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
     <widget class="QToolButton" name="saveButton">
      <property name="text">
       <string>Export</string>
@@ -117,6 +117,9 @@
        <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QProgressBar" name="progressBar"/>
    </item>
   </layout>
  </widget>
