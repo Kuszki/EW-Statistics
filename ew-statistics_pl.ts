@@ -215,7 +215,7 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation>Opcje grupowania</translation>
     </message>
     <message numerus="yes">
-        <location filename="paymentdialog.cpp" line="129"/>
+        <location filename="paymentdialog.cpp" line="130"/>
         <source> minute(s)</source>
         <translation>
             <numerusform> minuta</numerusform>
@@ -263,19 +263,19 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>User</source>
         <translation>Użytkownik</translation>
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>Month</source>
         <translation>Miesiąc</translation>
     </message>
     <message>
         <location filename="paymentwidget.cpp" line="29"/>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>Day</source>
         <translation>Dzień</translation>
     </message>
@@ -301,60 +301,211 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation>&lt;tr&gt;&lt;th&gt;Data&lt;/th&gt;&lt;th&gt;Od&lt;/th&gt;&lt;th&gt;Do&lt;/th&gt;&lt;th&gt;Czas pracy&lt;/th&gt;&lt;th&gt;Należność&lt;/th&gt;&lt;/tr&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="593"/>
+        <location filename="paymentwidget.cpp" line="592"/>
         <source>&lt;h1&gt;Report from %1 to %2&lt;/h1&gt;&lt;hr size=&apos;5&apos;&gt;</source>
         <translation>&lt;h1&gt;Raport od %1 do %2&lt;/h1&gt;&lt;hr size=&apos;5&apos;&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="597"/>
+        <location filename="paymentwidget.cpp" line="596"/>
         <source>&lt;p&gt;&lt;b&gt;Settings:&lt;/b&gt; Max iddle time = %1 min; Payment per hour = %2 PLN&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;&lt;b&gt;Settings:&lt;/b&gt; Max iddle time = %1 min; Payment per hour = %2 PLN&lt;/p&gt;&lt;hr size=&apos;5&apos;&gt;</oldsource>
         <translation>&lt;p&gt;&lt;b&gt;Parametry:&lt;/b&gt; Maksymalny czas bezczynności = %1 min; Stawka za godzinę = %2 PLN&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="612"/>
+        <location filename="paymentwidget.cpp" line="611"/>
         <source>Report</source>
         <translation>Raport</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="638"/>
+        <location filename="paymentwidget.cpp" line="637"/>
         <source>Save data</source>
         <translation>Zaspisz dane</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="639"/>
+        <location filename="paymentwidget.cpp" line="638"/>
         <source>CSV files (*.csv);;All files (*.*)</source>
         <translation>Pliki CSV (*.csv);;Wszystkie pliki (*.*)</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="647"/>
+        <location filename="paymentwidget.cpp" line="646"/>
         <source>User,Date,From,To,Time,Payment</source>
         <translation>Użytkownik,Data,Od,Do,Czas,Należność</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>From</source>
         <translation>Od</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>To</source>
         <translation>Do</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>Hours</source>
         <translation>Czas pracy</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="697"/>
+        <location filename="paymentwidget.cpp" line="696"/>
         <source>Payment</source>
         <translation>Należność</translation>
     </message>
     <message>
-        <location filename="paymentwidget.cpp" line="723"/>
+        <location filename="paymentwidget.cpp" line="722"/>
         <source> PLN</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>RedactionDialog</name>
+    <message>
+        <location filename="redactiondialog.ui" line="14"/>
+        <source>Redaction options</source>
+        <translation>Opcje redakcji</translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="23"/>
+        <source>Symbols size</source>
+        <translation>Rozmiar symboli</translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="29"/>
+        <source>1:500</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="39"/>
+        <location filename="redactiondialog.ui" line="68"/>
+        <location filename="redactiondialog.ui" line="97"/>
+        <location filename="redactiondialog.ui" line="126"/>
+        <source> m</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="58"/>
+        <source>1:1000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="87"/>
+        <source>1:2000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="116"/>
+        <source>1:5000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="148"/>
+        <source>Excluded symbols</source>
+        <translation>Pomijane symbole</translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="160"/>
+        <source>Compute symbols colisions</source>
+        <translation>Obliczaj kolizje etykiet z symbolami</translation>
+    </message>
+</context>
+<context>
+    <name>RedactionWidget</name>
+    <message>
+        <location filename="redactionwidget.ui" line="14"/>
+        <source>Redaction</source>
+        <translation>Redakcja</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="47"/>
+        <source>1:500</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="52"/>
+        <source>1:1000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="57"/>
+        <source>1:2000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="62"/>
+        <source>1:5000</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="83"/>
+        <source>Options</source>
+        <translation>Opcje</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="94"/>
+        <source>Export</source>
+        <translation>Eksportuj</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="105"/>
+        <source>Refresh</source>
+        <translation>Odśwież</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="478"/>
+        <source>Error</source>
+        <translation>Błąd</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="478"/>
+        <source>No valid data to save</source>
+        <translation>Brak poprawnych danych do zapisu</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="481"/>
+        <source>Save coordinates</source>
+        <translation>Zapisz współrzędne</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="482"/>
+        <source>Text files (*.txt)</source>
+        <translation>Pliki tekstowe (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="521"/>
+        <source>Source</source>
+        <translation>Rodzaj błędu</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="521"/>
+        <source>X</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="521"/>
+        <source>Y</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="586"/>
+        <source>Labels colisions</source>
+        <translation>Kolizje etykiet</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="587"/>
+        <source>Symbols colisions</source>
+        <translation>Kolizje symboli</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="620"/>
+        <location filename="redactionwidget.cpp" line="647"/>
+        <source>Yes</source>
+        <translation>Tak</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="620"/>
+        <location filename="redactionwidget.cpp" line="648"/>
+        <source>No</source>
+        <translation>Nie</translation>
     </message>
 </context>
 </TS>

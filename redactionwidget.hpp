@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                         *
- *  {description}                                                          *
- *  Copyright (C) 2018  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
+ *  Compute various statistics for EWMAPA software                         *
+ *  Copyright (C) 2017  Łukasz "Kuszki" Dróżdż  l.drozdz@openmailbox.org   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
  *  it under the terms of the GNU General Public License as published by   *
@@ -21,10 +21,13 @@
 #ifndef REDACTIONWIDGET_HPP
 #define REDACTIONWIDGET_HPP
 
+#include <QFileDialog>
+#include <QMessageBox>
 #include <QWidget>
 
 #include "commonstructures.hpp"
 #include "applicationcore.hpp"
+#include "redactiondialog.hpp"
 
 namespace Ui
 {
@@ -36,12 +39,65 @@ class RedactionWidget : public QWidget
 
 		Q_OBJECT
 
+	public: enum SCALE
+	{
+		S500,
+		S1000,
+		S2000,
+		S5000
+	};
+
+	public: enum TYPE
+	{
+		READONLY	= 0,
+		STRING	= 1,
+		INTEGER	= 4,
+		SMALLINT	= 5,
+		BOOL		= 7,
+		DOUBLE	= 8,
+		DATE		= 101,
+		MASK		= 102,
+		DATETIME	= 1000
+	};
+
 	public: struct FIELD
 	{
-		QString Name;
+		TYPE Type;
 
-		QHash<int, QString> LongDict;
-		QHash<int, QString> ShortDict;
+		QString Name;
+		QString Label;
+
+		bool Missing;
+
+		QMap<QVariant, QPair<QString, QString>> Dict;
+	};
+
+	public: struct TABLE
+	{
+		QString Name;
+		QString Label;
+		QString Data;
+
+		bool Point;
+		int Type;
+
+		QList<FIELD> Fields;
+		QMap<QString, QString> Labels;
+	};
+
+	public: struct LABEL
+	{
+		int Uid;
+
+		QPointF Point;
+		QString Text;
+
+		int Idw;
+		int Just;
+
+		double Ang;
+
+		QPolygonF Pol;
 	};
 
 	private:
@@ -51,17 +107,76 @@ class RedactionWidget : public QWidget
 		ApplicationCore* Core;
 		Ui::RedactionWidget* ui;
 
+		QVector<double> smbScales;
+		QStringList smbExclude;
+		SCALE mapScale = S500;
+		bool smbCompute;
+
 	public:
 
-		explicit RedactionWidget(QWidget* Parent = nullptr);
+		explicit RedactionWidget(ApplicationCore* App, QWidget* Parent = nullptr);
 		virtual ~RedactionWidget(void) override;
+
+	public slots:
+
+		void setParameters(const QVector<double>& Scales,
+					    const QStringList& Exclude,
+					    bool computeSymbols);
 
 	protected:
 
-		QHash<QString, QList<const FIELD*>> loadTables(QSqlDatabase& Db, const QHash<int, FIELD>& Fields);
+		QList<TABLE> loadTables(QSqlDatabase& Db);
+
 		QHash<int, QVector<double>> loadLayers(QSqlDatabase& Db);
-		QHash<int, FIELD> loadfields(QSqlDatabase& Db);
+
+		QHash<int, QList<QVariant>> loadData(const TABLE& Table,
+									  QSqlDatabase& Db);
+
+		QHash<int, QList<LABEL>> loadLabels(QSqlDatabase& Db);
+
+		QList<QPointF> loadSymbols(QSqlDatabase& Db);
+
+		void parseLabels(QHash<int, QList<LABEL>>& Labels, const TABLE& Tab,
+					  const QHash<int, QList<QVariant>>& Values) const;
+
+		void surfLabels(QHash<int, QList<LABEL>>& Labels, SCALE Sc,
+					 const QHash<int, QVector<double>>& Layers) const;
+
+		QSet<QPair<double, double>> getColisions(const QList<LABEL>& Labels) const;
+		QSet<QPair<double, double>> getColisions(const QList<LABEL>& Labels,
+										 const QList<QPointF>& Symbols) const;
+
+	private slots:
+
+		void refreshButtonClicked(void);
+		void optionsButtonClicked(void);
+		void saveButtonClicked(void);
+
+		void scaleValueChanged(int Scale);
+
+		void dataReloaded(const QHash<QString, QSet<QPair<double, double>>>& Data);
+
+		void refreshData(void);
+
+	signals:
+
+		void onDataReloaded(const QHash<QString, QSet<QPair<double, double>>>&);
 
 };
+
+bool operator == (const RedactionWidget::FIELD& One, const RedactionWidget::FIELD& Two);
+bool operator == (const RedactionWidget::TABLE& One, const RedactionWidget::TABLE& Two);
+
+QVariant getDataFromDict(const QVariant& Value, const QMap<QVariant, QPair<QString, QString>>& Dict, RedactionWidget::TYPE Type, bool Sh);
+QVariant getDataByDict(const QVariant& Value, const QMap<QVariant, QPair<QString, QString>>& Dict, RedactionWidget::TYPE Type, bool Sh);
+
+template<class Type, class Field, template<class> class Container>
+Type& getItemByField(Container<Type>& Items, const Field& Data, Field Type::*Pointer);
+
+template<class Type, class Field, template<class> class Container>
+const Type& getItemByField(const Container<Type>& Items, const Field& Data, Field Type::*Pointer);
+
+template<class Type, class Field, template<class> class Container>
+bool hasItemByField(const Container<Type>& Items, const Field& Data, Field Type::*Pointer);
 
 #endif // REDACTIONWIDGET_HPP

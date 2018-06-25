@@ -35,7 +35,8 @@ SOURCES		+=	main.cpp \
 				recordmodel.cpp \
 				paymentdialog.cpp \
 				connectdialog.cpp \
-    redactionwidget.cpp
+				redactionwidget.cpp \
+				redactiondialog.cpp
 
 HEADERS		+=	commonstructures.hpp \
 				mainwindow.hpp \
@@ -46,7 +47,8 @@ HEADERS		+=	commonstructures.hpp \
 				recordmodel.hpp \
 				paymentdialog.hpp \
 				connectdialog.hpp \
-    redactionwidget.hpp
+				redactionwidget.hpp \
+				redactiondialog.hpp
 
 FORMS		+=	mainwindow.ui \
 				aboutdialog.ui \
@@ -54,12 +56,9 @@ FORMS		+=	mainwindow.ui \
 				paymentwidget.ui \
 				paymentdialog.ui \
 				connectdialog.ui \
-    redactionwidget.ui
-
-LIBS			+=	-fopenmp
+				redactionwidget.ui \
+				redactiondialog.ui
 
 RESOURCES		+=	resources.qrc
 
 TRANSLATIONS	+=	ew-statistics_pl.ts
-
-QMAKE_CXXFLAGS	+=	-std=c++14 -fopenmp

@@ -21,10 +21,9 @@
 #ifndef APPLICATIONCORE_HPP
 #define APPLICATIONCORE_HPP
 
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
-#include <QObject>
+#include <QtConcurrent>
+#include <QtCore>
+#include <QtSql>
 
 #include "commonstructures.hpp"
 

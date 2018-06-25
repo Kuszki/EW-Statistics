@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget* Parent)
 	Core = new ApplicationCore();
 
 	About = new AboutDialog(this);
-
 	Details = new QTextBrowser(this);
 
 	Details->setWordWrapMode(QTextOption::NoWrap);
@@ -38,15 +37,18 @@ MainWindow::MainWindow(QWidget* Parent)
 	Core->moveToThread(&Thread);
 
 	PaymentWidget* Payments = new PaymentWidget(Core, this);
+	RedactionWidget* Redaction = new RedactionWidget(Core, this);
 
 	removeDetailsInfo();
 	setCentralWidget(Details);
 	appendModule(Payments);
+	appendModule(Redaction);
 	databaseConnected(false);
 
 	QSettings Settings("EW-Statistics");
 
 	Settings.beginGroup("Window");
+	setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::TabPosition::North);
 	restoreGeometry(Settings.value("geometry").toByteArray());
 	restoreState(Settings.value("state").toByteArray());
 	Settings.endGroup();
@@ -87,6 +89,7 @@ void MainWindow::appendModule(QWidget* Module)
 
 	Dock->setObjectName(Module->objectName());
 	Dock->setWindowTitle(Module->windowTitle());
+	Dock->setWindowIcon(Module->windowIcon());
 	Dock->setWidget(Module);
 
 	addDockWidget(Qt::LeftDockWidgetArea, Dock);

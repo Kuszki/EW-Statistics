@@ -1,9 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>RedactionWidget</class>
- <widget name="RedactionWidget" class="QWidget">
+ <widget class="QWidget" name="RedactionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,9 +11,178 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Redaction</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="tools-check-spelling">
+    <normaloff>.</normaloff>.</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="5">
+    <widget class="QTreeView" name="treeView">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="headerShowSortIndicator" stdset="0">
+      <bool>true</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QComboBox" name="scaleCombo">
+     <item>
+      <property name="text">
+       <string>1:500</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1:1000</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1:2000</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>1:5000</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>211</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <widget class="QToolButton" name="optionsButton">
+     <property name="text">
+      <string>Options</string>
+     </property>
+     <property name="icon">
+      <iconset theme="preferences-system">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="saveButton">
+     <property name="text">
+      <string>Export</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-save">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QToolButton" name="refreshButton">
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+     <property name="icon">
+      <iconset theme="view-refresh">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <pixmapfunction/>
- <connections/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>refreshButton</sender>
+   <signal>clicked()</signal>
+   <receiver>RedactionWidget</receiver>
+   <slot>refreshButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>375</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>scaleCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>RedactionWidget</receiver>
+   <slot>scaleValueChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>36</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>41</x>
+     <y>434</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>RedactionWidget</receiver>
+   <slot>saveButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>409</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>optionsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>RedactionWidget</receiver>
+   <slot>optionsButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>refreshButtonClicked()</slot>
+  <slot>scaleValueChanged(int)</slot>
+  <slot>saveButtonClicked()</slot>
+  <slot>optionsButtonClicked()</slot>
+ </slots>
 </ui>

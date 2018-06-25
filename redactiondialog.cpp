@@ -18,65 +18,43 @@
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#include "redactiondialog.hpp"
+#include "ui_redactiondialog.h"
 
-#include <QTextBrowser>
-#include <QDockWidget>
-#include <QMainWindow>
-
-#include "commonstructures.hpp"
-#include "databasesdialog.hpp"
-#include "applicationcore.hpp"
-#include "redactionwidget.hpp"
-#include "connectdialog.hpp"
-#include "paymentwidget.hpp"
-#include "aboutdialog.hpp"
-
-namespace Ui
+RedactionDialog::RedactionDialog(QWidget* Parent)
+: QDialog(Parent), ui(new Ui::RedactionDialog)
 {
-	class MainWindow;
+	ui->setupUi(this);
 }
 
-class MainWindow : public QMainWindow
+RedactionDialog::~RedactionDialog(void)
 {
+	delete ui;
+}
 
-		Q_OBJECT
+void RedactionDialog::accept(void)
+{
+	QDialog::accept(); const QVector<double> Scales =
+	{
+		ui->aScaleSpin->value(),
+		ui->bScaleSpin->value(),
+		ui->cScaleSpin->value(),
+		ui->dScaleSpin->value()
+	};
 
-	private:
+	const QStringList Exclude = ui->excludeEdit->toPlainText().split('\n', QString::SkipEmptyParts);
 
-		QVector<QDockWidget*> Modules;
+	emit onDialogAccepted(Scales, Exclude, ui->computeBox->isChecked());
+}
 
-		ApplicationCore* Core;
-		AboutDialog* About;
+void RedactionDialog::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols)
+{
+	ui->aScaleSpin->setValue(Scales.value(0, 0.5));
+	ui->bScaleSpin->setValue(Scales.value(1, 1.0));
+	ui->cScaleSpin->setValue(Scales.value(2, 2.0));
+	ui->dScaleSpin->setValue(Scales.value(3, 5.0));
 
-		Ui::MainWindow* ui;
-		QTextBrowser* Details;
+	ui->excludeEdit->setPlainText(Exclude.join('\n'));
 
-		QThread Thread;
-
-	public:
-
-		explicit MainWindow(QWidget* Parent = nullptr);
-		virtual ~MainWindow(void) override;
-
-		void appendModule(QWidget* Module);
-
-	public slots:
-
-		void updateDetailsInfo(const QString& Info);
-		void removeDetailsInfo(void);
-
-	private slots:
-
-		void connectActionClicked(void);
-		void databasesActionClicked(void);
-
-		void loginDataAccepted(void);
-
-		void databaseConnected(bool OK);
-		void databaseDisconnected(void);
-
-};
-
-#endif // MAINWINDOW_HPP
+	ui->computeBox->setChecked(computeSymbols);
+}

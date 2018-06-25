@@ -18,65 +18,44 @@
  *                                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef REDACTIONDIALOG_HPP
+#define REDACTIONDIALOG_HPP
 
-#include <QTextBrowser>
-#include <QDockWidget>
-#include <QMainWindow>
-
-#include "commonstructures.hpp"
-#include "databasesdialog.hpp"
-#include "applicationcore.hpp"
-#include "redactionwidget.hpp"
-#include "connectdialog.hpp"
-#include "paymentwidget.hpp"
-#include "aboutdialog.hpp"
+#include <QDialog>
 
 namespace Ui
 {
-	class MainWindow;
+	class RedactionDialog;
 }
 
-class MainWindow : public QMainWindow
+class RedactionDialog : public QDialog
 {
 
 		Q_OBJECT
 
 	private:
 
-		QVector<QDockWidget*> Modules;
-
-		ApplicationCore* Core;
-		AboutDialog* About;
-
-		Ui::MainWindow* ui;
-		QTextBrowser* Details;
-
-		QThread Thread;
+		Ui::RedactionDialog* ui;
 
 	public:
 
-		explicit MainWindow(QWidget* Parent = nullptr);
-		virtual ~MainWindow(void) override;
-
-		void appendModule(QWidget* Module);
+		explicit RedactionDialog(QWidget* Parent = nullptr);
+		virtual ~RedactionDialog(void) override;
 
 	public slots:
 
-		void updateDetailsInfo(const QString& Info);
-		void removeDetailsInfo(void);
+		virtual void accept(void) override;
 
-	private slots:
+		void setParameters(const QVector<double>& Scales,
+					    const QStringList& Exclude,
+					    bool computeSymbols);
 
-		void connectActionClicked(void);
-		void databasesActionClicked(void);
+	signals:
 
-		void loginDataAccepted(void);
-
-		void databaseConnected(bool OK);
-		void databaseDisconnected(void);
+		void onDialogAccepted(const QVector<double>& Scales,
+						  const QStringList& Exclude,
+						  bool computeSymbols);
 
 };
 
-#endif // MAINWINDOW_HPP
+#endif // REDACTIONDIALOG_HPP

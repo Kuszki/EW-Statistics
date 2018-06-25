@@ -537,7 +537,7 @@ void PaymentWidget::refreshButtonClicked(void)
 
 void PaymentWidget::optionsButtonClicked(void)
 {
-	PaymentDialog* Dialog = new PaymentDialog(this);
+	PaymentDialog* Dialog = new PaymentDialog(this); Dialog->open();
 
 	connect(Dialog, &PaymentDialog::accepted, Dialog, &PaymentDialog::deleteLater);
 	connect(Dialog, &PaymentDialog::rejected, Dialog, &PaymentDialog::deleteLater);
@@ -545,7 +545,6 @@ void PaymentWidget::optionsButtonClicked(void)
 	connect(Dialog, &PaymentDialog::onDialogAccepted, this, &PaymentWidget::setParameters);
 
 	Dialog->setParameters(startDate, stopDate, allGroups, singlePayment, iddleDelay);
-	Dialog->open();
 }
 
 void PaymentWidget::printButtonClicked(void)

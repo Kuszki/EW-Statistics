@@ -50,3 +50,39 @@ QDataStream& operator >> (QDataStream& Stream, DBINFO& V)
 
 	return Stream;
 }
+
+bool pointComp(const QPointF& A, const QPointF& B, double d)
+{
+	return (qAbs(A.x() - B.x()) <= d) && (qAbs(A.y() - B.y()) <= d);
+}
+
+bool isVariantEmpty(const QVariant& Value)
+{
+	if (Value.isNull()) return true;
+	else switch (Value.type())
+	{
+		case QVariant::Int: return Value == QVariant(int(0));
+		case QVariant::Double: return Value == QVariant(double(0.0));
+		case QVariant::Date: return Value == QVariant(QDate());
+		case QVariant::DateTime: return Value == QVariant(QDateTime());
+		case QVariant::String: return Value == QVariant(QString());
+		case QVariant::List: return Value == QVariantList();
+
+		default: return false;
+	}
+}
+
+double getSurface(const QPolygonF& P)
+{
+	double sum(0.0); for (int i = 0; i < P.size(); ++i)
+	{
+		const double yn = (i + 1) == P.size() ? P[0].y() : P[i + 1].y();
+		const double yp = i == 0 ? P.last().y() : P[i - 1].y();
+
+		const double xi = P[i].x();
+
+		sum += xi * (yn - yp);
+	}
+
+	return qAbs(sum / 2.0);
+}

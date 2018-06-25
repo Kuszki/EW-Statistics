@@ -22,8 +22,7 @@
 #define COMMONSTRUCTURES_HPP
 
 #include <QtCore>
-
-#include <QDebug>
+#include <QtGui>
 
 struct DBINFO
 {
@@ -44,5 +43,11 @@ bool operator != (const DBINFO& A, const DBINFO& B);
 
 QDataStream& operator << (QDataStream& Stream, const DBINFO& V);
 QDataStream& operator >> (QDataStream& Stream, DBINFO& V);
+
+bool pointComp(const QPointF& A, const QPointF& B, double d = 0.005);
+
+bool isVariantEmpty(const QVariant& Value);
+
+double getSurface(const QPolygonF& P);
 
 #endif // COMMONSTRUCTURES_HPP

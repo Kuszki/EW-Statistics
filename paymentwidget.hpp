@@ -27,7 +27,6 @@
 #include <QFileDialog>
 #include <QPrinter>
 #include <QWidget>
-#include <QDebug>
 
 #include <QtConcurrent>
 
