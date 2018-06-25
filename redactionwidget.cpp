@@ -307,6 +307,9 @@ void RedactionWidget::parseLabels(QHash<int, QList<RedactionWidget::LABEL>>& Lab
 
 				if (isVariantEmpty(Val)) Str.append(QString());
 				else if (Not.contains(Val.toString())) Str.append(QString());
+				else if (Args.contains("Z2N")) Str.append(QString::number(Val.toDouble(), 'f', 2));
+				else if (Args.contains("Z2")) Str.append(QString::number(Val.toDouble(), 'f', 2));
+				else if (Args.contains("Z1")) Str.append(QString::number(Val.toDouble(), 'f', 1));
 				else Str.append(Val.toString());
 			}
 
@@ -319,6 +322,8 @@ void RedactionWidget::parseLabels(QHash<int, QList<RedactionWidget::LABEL>>& Lab
 		{
 			Label.Text.replace(i, 1, Str.takeFirst());
 		}
+
+		if (!Label.Text.isEmpty()) Label.Text = Label.Text.trimmed();
 	};
 
 	auto Keys = Labels.keys().toSet() & Values.keys().toSet();
@@ -343,10 +348,11 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 		const double dy = (2.0/3.0) * Layer[0] * Layer[int(Sc) + 1];
 		const double dx = Layer[0] * Layer[int(Sc) + 1];
 
-		const int lines = Label.Text.count('|') + 1;
+		const int corr = Label.Text.endsWith('|') ? 1 : 0;
+		const int lines = Label.Text.count('|') + 1 - corr;
 
-		const double wY = ((lines > 1 ? maxSize(Label.Text) : Label.Text.size()) * dy) / 2.0;
-		const double wX = (lines * dx) / 2.0;
+		const double wY = ((lines > 1 ? maxSize(Label.Text) : Label.Text.size() - corr) * dy) / 2.0;
+		const double wX = ((lines > 1 ? lines * (4.0/3.0) : 1) * dx) / 2.0;
 
 		const QPointF Org = Label.Point;
 
