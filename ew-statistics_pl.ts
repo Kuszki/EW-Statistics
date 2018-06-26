@@ -488,84 +488,89 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation>Opcje</translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="94"/>
+        <location filename="redactionwidget.ui" line="72"/>
         <source>Export</source>
         <translation>Eksportuj</translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="105"/>
+        <location filename="redactionwidget.ui" line="83"/>
         <source>Refresh</source>
         <translation>Odśwież</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="406"/>
+        <location filename="redactionwidget.cpp" line="409"/>
         <source>Computing labels colisions (%p%)</source>
         <translation>Obliczanie kolizji etykiet (%p%)</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="473"/>
+        <location filename="redactionwidget.cpp" line="482"/>
         <source>Computing symbols colisions (%p%)</source>
         <translation>Obliczanie kolizji symboli (%p%)</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="537"/>
         <source>Error</source>
-        <translation>Błąd</translation>
+        <translation type="vanished">Błąd</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="537"/>
         <source>No valid data to save</source>
-        <translation>Brak poprawnych danych do zapisu</translation>
+        <translation type="vanished">Brak poprawnych danych do zapisu</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="540"/>
+        <location filename="redactionwidget.cpp" line="552"/>
         <source>Save coordinates</source>
         <translation>Zapisz współrzędne</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="541"/>
+        <location filename="redactionwidget.cpp" line="553"/>
         <source>Text files (*.txt)</source>
         <translation>Pliki tekstowe (*.txt)</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="580"/>
         <source>Source</source>
-        <translation>Rodzaj błędu</translation>
+        <translation type="vanished">Rodzaj błędu</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="580"/>
+        <location filename="redactionwidget.cpp" line="579"/>
         <source>X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="580"/>
+        <location filename="redactionwidget.cpp" line="579"/>
         <source>Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="631"/>
+        <location filename="redactionwidget.cpp" line="579"/>
+        <source>Surface</source>
+        <translation>Powierzchnia</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="579"/>
+        <source>Ratio</source>
+        <translation>Stopień kolizji</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="623"/>
         <source>Loading data</source>
         <translation>Wczytywanie danych</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="660"/>
         <source>Labels colisions</source>
-        <translation>Kolizje etykiet</translation>
+        <translation type="vanished">Kolizje etykiet</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="661"/>
         <source>Symbols colisions</source>
-        <translation>Kolizje symboli</translation>
+        <translation type="vanished">Kolizje symboli</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="694"/>
-        <location filename="redactionwidget.cpp" line="721"/>
+        <location filename="redactionwidget.cpp" line="686"/>
+        <location filename="redactionwidget.cpp" line="713"/>
         <source>Yes</source>
         <translation>Tak</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="694"/>
-        <location filename="redactionwidget.cpp" line="722"/>
+        <location filename="redactionwidget.cpp" line="686"/>
+        <location filename="redactionwidget.cpp" line="714"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>
