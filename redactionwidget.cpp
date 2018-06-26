@@ -69,6 +69,8 @@ RedactionWidget::~RedactionWidget(void)
 
 void RedactionWidget::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue)
 {
+	QMutexLocker Locker(&Synchronizer);
+
 	smbScales = Scales;
 	smbExclude = Exclude;
 	smbCompute = computeSymbols;

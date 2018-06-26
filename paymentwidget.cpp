@@ -880,6 +880,8 @@ void PaymentWidget::refreshData(void)
 
 void PaymentWidget::setParameters(const QDate& Start, const QDate& Stop, const QList<QPair<QString, bool>>& Groups, double Payment, bool Refresh, int Delay)
 {
+	QMutexLocker Locker(&Synchronizer);
+
 	startDate = Start;
 	stopDate = Stop;
 
