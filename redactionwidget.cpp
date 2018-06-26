@@ -588,12 +588,18 @@ void RedactionWidget::dataReloaded(const QSet<QStringList>& Data)
 		List << new QStandardItem(R.value(2) + " m²");
 		List << new QStandardItem(R.value(3) + "%");
 
+		List[0]->setData(R.value(0).toDouble(), Qt::UserRole);
+		List[1]->setData(R.value(1).toDouble(), Qt::UserRole);
+		List[2]->setData(R.value(2).toDouble(), Qt::UserRole);
+		List[3]->setData(R.value(3).toDouble(), Qt::UserRole);
+
 		Model->appendRow(List);
 	}
 
 	auto oldModel = ui->treeView->model();
 	auto oldSelect = ui->treeView->selectionModel();
 
+	Model->setSortRole(Qt::UserRole);
 	ui->treeView->setModel(Model);
 
 	delete oldModel;
