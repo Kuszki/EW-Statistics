@@ -572,7 +572,7 @@ void RedactionWidget::scaleValueChanged(int Scale)
 
 void RedactionWidget::dataReloaded(const QSet<QStringList>& Data)
 {
-	QStandardItemModel* Model = new QStandardItemModel(this); int Count(0);
+	QStandardItemModel* Model = new QStandardItemModel(this);
 
 	Model->setHorizontalHeaderLabels(
 	{
