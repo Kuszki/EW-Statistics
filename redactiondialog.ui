@@ -14,15 +14,16 @@
    <string>Redaction options</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="preferences-system"/>
+   <iconset theme="preferences-system">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="sizeGroup">
      <property name="title">
       <string>Symbols size</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <layout class="QFormLayout" name="sizeLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="aScaleLabel">
         <property name="text">
@@ -142,6 +143,67 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="toleranceGroup">
+     <property name="title">
+      <string>Tolerance</string>
+     </property>
+     <layout class="QFormLayout" name="toleranceLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="abstLabel">
+        <property name="text">
+         <string>Absolute tolerance</string>
+        </property>
+        <property name="buddy">
+         <cstring>abstSpin</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QDoubleSpinBox" name="abstSpin">
+        <property name="specialValueText">
+         <string>Disabled</string>
+        </property>
+        <property name="suffix">
+         <string> m²</string>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="prctLabel">
+        <property name="text">
+         <string>Percentage tolerance</string>
+        </property>
+        <property name="buddy">
+         <cstring>prctSpin</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="prctSpin">
+        <property name="specialValueText">
+         <string>Disabled</string>
+        </property>
+        <property name="suffix">
+         <string>%</string>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="excludeGroup">
      <property name="title">
@@ -154,25 +216,39 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="computeBox">
-     <property name="text">
-      <string>Compute symbols colisions</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+   <item row="2" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="computeBox">
+       <property name="text">
+        <string>Compute symbols colisions</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>aScaleSpin</tabstop>
+  <tabstop>bScaleSpin</tabstop>
+  <tabstop>cScaleSpin</tabstop>
+  <tabstop>dScaleSpin</tabstop>
+  <tabstop>abstSpin</tabstop>
+  <tabstop>prctSpin</tabstop>
+  <tabstop>excludeEdit</tabstop>
+  <tabstop>computeBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

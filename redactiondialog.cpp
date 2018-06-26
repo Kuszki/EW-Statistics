@@ -44,10 +44,13 @@ void RedactionDialog::accept(void)
 
 	const QStringList Exclude = ui->excludeEdit->toPlainText().split('\n', QString::SkipEmptyParts);
 
-	emit onDialogAccepted(Scales, Exclude, ui->computeBox->isChecked());
+	emit onDialogAccepted(Scales, Exclude,
+					  ui->computeBox->isChecked(),
+					  ui->abstSpin->value(),
+					  ui->prctSpin->value() / 100.0);
 }
 
-void RedactionDialog::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols)
+void RedactionDialog::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue)
 {
 	ui->aScaleSpin->setValue(Scales.value(0, 0.5));
 	ui->bScaleSpin->setValue(Scales.value(1, 1.0));
@@ -57,4 +60,7 @@ void RedactionDialog::setParameters(const QVector<double>& Scales, const QString
 	ui->excludeEdit->setPlainText(Exclude.join('\n'));
 
 	ui->computeBox->setChecked(computeSymbols);
+
+	ui->abstSpin->setValue(absValue);
+	ui->prctSpin->setValue(prcValue * 100.0);
 }

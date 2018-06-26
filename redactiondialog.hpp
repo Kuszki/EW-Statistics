@@ -48,13 +48,15 @@ class RedactionDialog : public QDialog
 
 		void setParameters(const QVector<double>& Scales,
 					    const QStringList& Exclude,
-					    bool computeSymbols);
+					    bool computeSymbols,
+					    double absValue,
+					    double prcValue);
 
 	signals:
 
-		void onDialogAccepted(const QVector<double>& Scales,
-						  const QStringList& Exclude,
-						  bool computeSymbols);
+		void onDialogAccepted(const QVector<double>&,
+						  const QStringList&,
+						  bool, double, double);
 
 };
 

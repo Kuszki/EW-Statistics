@@ -98,7 +98,9 @@ class RedactionWidget : public QWidget
 		double Ang;
 
 		QPolygonF Pol;
+
 		double Rad;
+		double Sur;
 	};
 
 	private:
@@ -112,6 +114,8 @@ class RedactionWidget : public QWidget
 		QStringList smbExclude;
 		SCALE mapScale = S500;
 		bool smbCompute;
+		double tolAbs;
+		double tolPrc;
 
 	public:
 
@@ -122,7 +126,9 @@ class RedactionWidget : public QWidget
 
 		void setParameters(const QVector<double>& Scales,
 					    const QStringList& Exclude,
-					    bool computeSymbols);
+					    bool computeSymbols,
+					    double absValue,
+					    double prcValue);
 
 	protected:
 

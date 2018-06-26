@@ -126,6 +126,7 @@
  <tabstops>
   <tabstop>treeView</tabstop>
   <tabstop>searchEdit</tabstop>
+  <tabstop>saveButton</tabstop>
   <tabstop>previewButton</tabstop>
   <tabstop>printButton</tabstop>
   <tabstop>optionsButton</tabstop>

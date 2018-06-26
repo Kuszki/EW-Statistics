@@ -34,6 +34,8 @@ RedactionWidget::RedactionWidget(ApplicationCore* App, QWidget* Parent)
 	smbExclude = Settings.value("exclude").toStringList();
 	mapScale = SCALE(Settings.value("scale", 0).toInt());
 	smbCompute = Settings.value("smbcmp", true).toBool();
+	tolAbs = Settings.value("abstol", 0.0).toDouble();
+	tolPrc = Settings.value("prctol", 0.0).toDouble();
 	Settings.endGroup();
 
 	ui->scaleCombo->setCurrentIndex(mapScale);
@@ -58,16 +60,20 @@ RedactionWidget::~RedactionWidget(void)
 	Settings.setValue("smb2000", smbScales.value(2, 2.0));
 	Settings.setValue("smb5000", smbScales.value(3, 5.0));
 	Settings.setValue("smbcmp", smbCompute);
+	Settings.setValue("abstol", tolAbs);
+	Settings.setValue("prctol", tolPrc);
 	Settings.endGroup();
 
 	delete ui;
 }
 
-void RedactionWidget::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols)
+void RedactionWidget::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue)
 {
 	smbScales = Scales;
 	smbExclude = Exclude;
 	smbCompute = computeSymbols;
+	tolAbs = absValue;
+	tolPrc = prcValue;
 }
 
 QList<RedactionWidget::TABLE> RedactionWidget::loadTables(QSqlDatabase& Db)
@@ -309,6 +315,7 @@ void RedactionWidget::parseLabels(QHash<int, QList<RedactionWidget::LABEL>>& Lab
 				else if (Not.contains(Val.toString())) Str.append(QString());
 				else if (Args.contains("Z2N")) Str.append(QString::number(Val.toDouble(), 'f', 2));
 				else if (Args.contains("Z2")) Str.append(QString::number(Val.toDouble(), 'f', 2));
+				else if (Args.contains("Z1N")) Str.append(QString::number(Val.toDouble(), 'f', 1));
 				else if (Args.contains("Z1")) Str.append(QString::number(Val.toDouble(), 'f', 1));
 				else Str.append(Val.toString());
 			}
@@ -379,6 +386,7 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 			Label.Point += P / 4.0;
 		}
 
+		Label.Sur = 4.0 * wY * wX;
 		Label.Rad = qMax(wY, wX);
 		Label.Just = 5;
 	};
@@ -409,20 +417,28 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 
 			if (!Int.isEmpty())
 			{
-				int S = Int.size();
-				double x(0.0), y(0.0);
+				const double Surf = getSurface(Int); bool OK(true);
 
-				if (Int.isClosed()) S -= 1;
+				if (tolPrc != 0.0 && (tolPrc * Lab.Sur > Surf)) OK = false;
+				if (tolAbs != 0.0 && (tolAbs > Surf)) OK = false;
 
-				for (int i = 0; i < S; ++i)
+				if (OK)
 				{
-					x += Int[i].x() / S;
-					y += Int[i].y() / S;
-				}
+					int S = Int.size();
+					double x(0.0), y(0.0);
 
-				Locker.lock();
-				Res.insert({ x, y });
-				Locker.unlock();
+					if (Int.isClosed()) S -= 1;
+
+					for (int i = 0; i < S; ++i)
+					{
+						x += Int[i].x() / S;
+						y += Int[i].y() / S;
+					}
+
+					Locker.lock();
+					Res.insert({ x, y });
+					Locker.unlock();
+				}
 			}
 		}
 
@@ -464,14 +480,23 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 		{
 			if ((Lab.Rad + Scl) < QLineF(Lab.Point, Smb).length()) continue;
 
-			bool OK = Lab.Pol.containsPoint(Smb, Qt::OddEvenFill);
+			bool iOK = Lab.Pol.containsPoint(Smb, Qt::OddEvenFill);
+			double r(INFINITY), Surf(0.0); bool oOK(false), OK(true);
 
-			if (!OK) for (int i = 1; i < Lab.Pol.size(); ++i)
+			for (int i = 1; i < Lab.Pol.size(); ++i)
 			{
-				OK = OK || (pdistance(QLineF(Lab.Pol[i - 1], Lab.Pol[i]), Smb) <= Scl);
+				const double dst = pdistance(QLineF(Lab.Pol[i - 1], Lab.Pol[i]), Smb);
+
+				oOK = oOK || (dst <= Scl); r = qMin(r, dst);
 			}
 
-			if (OK)
+			if (iOK && r >= Scl) Surf = M_PI * Scl * Scl;
+			else if (r <= Scl) Surf = Surf = M_PI * (Scl - r) * (Scl - r);
+
+			if (tolPrc != 0.0 && (tolPrc * Lab.Sur > Surf)) OK = false;
+			if (tolAbs != 0.0 && (tolAbs > Surf)) OK = false;
+
+			if ((iOK || oOK) && OK)
 			{
 				Locker.lock();
 				Res.insert({ Smb.x(), Smb.y() });
@@ -503,7 +528,7 @@ void RedactionWidget::optionsButtonClicked(void)
 
 	connect(Dialog, &RedactionDialog::onDialogAccepted, this, &RedactionWidget::setParameters);
 
-	Dialog->setParameters(smbScales, smbExclude, smbCompute);
+	Dialog->setParameters(smbScales, smbExclude, smbCompute, tolAbs, tolPrc);
 }
 
 void RedactionWidget::saveButtonClicked(void)

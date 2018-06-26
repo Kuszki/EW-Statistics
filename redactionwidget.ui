@@ -115,6 +115,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>treeView</tabstop>
+  <tabstop>scaleCombo</tabstop>
+  <tabstop>optionsButton</tabstop>
+  <tabstop>saveButton</tabstop>
+  <tabstop>refreshButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
