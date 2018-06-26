@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
 
 	qRegisterMetaType<QList<DBINFO>>("QList<DBINFO>");
 	qRegisterMetaType<QVector<double>>("QVector<double>");
+	qRegisterMetaType<QSet<QStringList>>("QSet<QStringList>");
 	qRegisterMetaType<QMap<QString,bool>>("QMap<QString,bool>");
-	qRegisterMetaType<QHash<QString,QSet<QPair<double,double>>>>("QHash<QString,QSet<QPair<double,double>>>");
 
 	qRegisterMetaType<QList<PaymentWidget::RECORD>>("QList<RECORD>");
 

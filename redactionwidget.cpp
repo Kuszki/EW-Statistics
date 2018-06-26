@@ -402,9 +402,9 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 	});
 }
 
-QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& Labels) const
+QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels) const
 {
-	QMutex Locker; QSet<QPair<double, double>> Res; int Step(0);
+	QMutex Locker; QSet<QStringList> Res; int Step(0);
 
 	emit onProgressRename(tr("Computing labels colisions (%p%)"));
 	emit onProgressStart(0, Labels.size()); emit onProgresUpdate(0);
@@ -426,8 +426,8 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 
 				if (OK)
 				{
-					int S = Int.size();
-					double x(0.0), y(0.0);
+					int S = Int.size(); double x(0.0), y(0.0);
+					const double rat = Surf / qMin(Lab.Sur, Oth.Sur);
 
 					if (Int.isClosed()) S -= 1;
 
@@ -437,8 +437,14 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 						y += Int[i].y() / S;
 					}
 
+					QStringList Row = QStringList()
+						<< QString::number(x, 'f', 3)
+						<< QString::number(y, 'f', 3)
+						<< QString::number(Surf, 'f', 2)
+						<< QString::number(rat * 100.0, 'f', 0);
+
 					Locker.lock();
-					Res.insert({ x, y });
+					Res.insert(Row);
 					Locker.unlock();
 				}
 			}
@@ -452,9 +458,9 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 	return Res;
 }
 
-QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& Labels, const QList<QPointF>& Symbols) const
+QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels, const QList<QPointF>& Symbols) const
 {
-	QMutex Locker; QSet<QPair<double, double>> Res; const double Scl = smbScales.value(mapScale) / 2.0; int Step(0);
+	QMutex Locker; QSet<QStringList> Res; const double Scl = smbScales.value(mapScale) / 2.0; int Step(0);
 
 	static const auto pdistance = [] (const QLineF& L, const QPointF& P) -> double
 	{
@@ -500,8 +506,14 @@ QSet<QPair<double, double>> RedactionWidget::getColisions(const QList<LABEL>& La
 
 			if ((iOK || oOK) && OK)
 			{
+				QStringList Row = QStringList()
+					<< QString::number(Smb.x(), 'f', 3)
+					<< QString::number(Smb.y(), 'f', 3)
+					<< QString::number(Surf, 'f', 2)
+					<< QString::number((Surf / Lab.Sur) * 100.0, 'f', 0);
+
 				Locker.lock();
-				Res.insert({ Smb.x(), Smb.y() });
+				Res.insert(Row);
 				Locker.unlock();
 			}
 		}
@@ -537,34 +549,19 @@ void RedactionWidget::saveButtonClicked(void)
 {
 	QStandardItemModel* Model = dynamic_cast<QStandardItemModel*>(ui->treeView->model());
 
-	if (!Model) QMessageBox::critical(this, tr("Error"), tr("No valid data to save"));
-	else
+	const QString Path = QFileDialog::getSaveFileName(this, tr("Save coordinates"),
+											QString(), tr("Text files (*.txt)"));
+
+	if (Path.isEmpty()) return; QFile File(Path); QTextStream Stream(&File);
+
+	const auto Selection = ui->treeView->selectionModel()->selectedRows();
+
+	if (!File.open(QFile::WriteOnly | QFile::Text)) return;
+
+	for (int j = 0; j < Model->rowCount(); ++j) if (Selection.contains(Model->index(j, 0)))
 	{
-		const QString Path = QFileDialog::getSaveFileName(this, tr("Save coordinates"),
-												QString(), tr("Text files (*.txt)"));
-
-		if (!Path.isEmpty())
-		{
-			QFile File(Path); QTextStream Stream(&File);
-
-			Stream.setRealNumberNotation(QTextStream::FixedNotation);
-			Stream.setRealNumberPrecision(3);
-
-			if (File.open(QFile::WriteOnly | QFile::Text))
-			{
-				for (int i = 0; i < Model->rowCount(); ++i)
-				{
-					auto Root = Model->index(i, 0);
-					auto Count = Model->rowCount(Root);
-
-					for (int j = 0; j < Count; ++j)
-					{
-						Stream << Model->data(Model->index(j, 1, Root)).toString() << '\t'
-							  << Model->data(Model->index(j, 2, Root)).toString() << '\n';
-					}
-				}
-			}
-		}
+		Stream << Model->data(Model->index(j, 0)).toString() << '\t'
+			  << Model->data(Model->index(j, 1)).toString() << '\n';
 	}
 }
 
@@ -573,61 +570,53 @@ void RedactionWidget::scaleValueChanged(int Scale)
 	mapScale = SCALE(Scale);
 }
 
-void RedactionWidget::dataReloaded(const QHash<QString, QSet<QPair<double, double>>>& Data)
+void RedactionWidget::dataReloaded(const QSet<QStringList>& Data)
 {
-	QStandardItemModel* Model = new QStandardItemModel(this);
-	const QStringList Bases = Data.keys(); int Count(0);
+	QStandardItemModel* Model = new QStandardItemModel(this); int Count(0);
 
 	Model->setHorizontalHeaderLabels(
 	{
-		tr("Source"), tr("X"), tr("Y")
+		tr("X"), tr("Y"), tr("Surface"), tr("Ratio")
 	});
 
-	for (const auto& Db : Bases)
+	for (const auto& R : Data)
 	{
-		QStandardItem* Root = new QStandardItem(Db);
-		QSet<QStringList> Uniques;
+		QList<QStandardItem*> List;
 
-		for (const auto& P : Data[Db])
-		{
-			QStringList Current;
+		List << new QStandardItem(R.value(0));
+		List << new QStandardItem(R.value(1));
+		List << new QStandardItem(R.value(2) + " m²");
+		List << new QStandardItem(R.value(3) + "%");
 
-			Current << QString::number(P.first, 'f', 3);
-			Current << QString::number(P.second, 'f', 3);
-
-			if (Uniques.contains(Current)) continue;
-			else Uniques.insert(Current);
-
-			QList<QStandardItem*> Row;
-
-			Row << new QStandardItem();
-			Row << new QStandardItem(Current[0]);
-			Row << new QStandardItem(Current[1]);
-
-			Root->appendRow(Row);
-		}
-
-		Model->appendRow(Root);
-		Count += Uniques.size();
+		Model->appendRow(List);
 	}
 
 	auto oldModel = ui->treeView->model();
 	auto oldSelect = ui->treeView->selectionModel();
 
 	ui->treeView->setModel(Model);
-	ui->saveButton->setEnabled(Count > 0);
 
 	delete oldModel;
 	delete oldSelect;
 
+	connect(ui->treeView->selectionModel(),
+		   &QItemSelectionModel::selectionChanged,
+		   this, &RedactionWidget::selectionChanged);
+
 	setEnabled(true); ui->progressBar->setVisible(false);
+}
+
+void RedactionWidget::selectionChanged(void)
+{
+	ui->saveButton->setEnabled(ui->treeView->selectionModel()->selectedRows().size());
 }
 
 void RedactionWidget::refreshData(void)
 {
 	QMutexLocker Locker(&Synchronizer);
-	QHash<QString, QSet<QPair<double, double>>> List;
-	QList<LABEL> allLabels; QList<QPointF> allSmbs;
+	QSet<QStringList> List;
+	QList<LABEL> allLabels;
+	QList<QPointF> allSmbs;
 
 	auto Databases = Core->getDatabases();
 
@@ -660,8 +649,8 @@ void RedactionWidget::refreshData(void)
 		if (smbCompute) allSmbs.append(loadSymbols(Databases[i]));
 	}
 
-	List.insert(tr("Labels colisions"), getColisions(allLabels));
-	List.insert(tr("Symbols colisions"), getColisions(allLabels, allSmbs));
+	List += getColisions(allLabels);
+	List += getColisions(allLabels, allSmbs);
 
 	emit onDataReloaded(List);
 }

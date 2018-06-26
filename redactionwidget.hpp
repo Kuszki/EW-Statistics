@@ -149,9 +149,9 @@ class RedactionWidget : public QWidget
 		void surfLabels(QHash<int, QList<LABEL>>& Labels, SCALE Sc,
 					 const QHash<int, QVector<double>>& Layers) const;
 
-		QSet<QPair<double, double>> getColisions(const QList<LABEL>& Labels) const;
-		QSet<QPair<double, double>> getColisions(const QList<LABEL>& Labels,
-										 const QList<QPointF>& Symbols) const;
+		QSet<QStringList> getColisions(const QList<LABEL>& Labels) const;
+		QSet<QStringList> getColisions(const QList<LABEL>& Labels,
+								 const QList<QPointF>& Symbols) const;
 
 	private slots:
 
@@ -161,13 +161,15 @@ class RedactionWidget : public QWidget
 
 		void scaleValueChanged(int Scale);
 
-		void dataReloaded(const QHash<QString, QSet<QPair<double, double>>>& Data);
+		void dataReloaded(const QSet<QStringList>& Data);
+
+		void selectionChanged(void);
 
 		void refreshData(void);
 
 	signals:
 
-		void onDataReloaded(const QHash<QString, QSet<QPair<double, double>>>&);
+		void onDataReloaded(const QSet<QStringList>&);
 
 		void onProgressRename(const QString&) const;
 		void onProgressStart(int, int) const;
