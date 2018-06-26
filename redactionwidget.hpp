@@ -28,7 +28,7 @@
 #include "commonstructures.hpp"
 #include "applicationcore.hpp"
 #include "redactiondialog.hpp"
-#include <QDebug>
+
 namespace Ui
 {
 	class RedactionWidget;
