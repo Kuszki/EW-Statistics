@@ -36,6 +36,7 @@ RedactionWidget::RedactionWidget(ApplicationCore* App, QWidget* Parent)
 	smbCompute = Settings.value("smbcmp", true).toBool();
 	tolAbs = Settings.value("abstol", 0.0).toDouble();
 	tolPrc = Settings.value("prctol", 0.0).toDouble();
+	maxIters = Settings.value("iters", 1).toInt();
 	Settings.endGroup();
 
 	ui->scaleCombo->setCurrentIndex(mapScale);
@@ -62,12 +63,13 @@ RedactionWidget::~RedactionWidget(void)
 	Settings.setValue("smbcmp", smbCompute);
 	Settings.setValue("abstol", tolAbs);
 	Settings.setValue("prctol", tolPrc);
+	Settings.setValue("iters", maxIters);
 	Settings.endGroup();
 
 	delete ui;
 }
 
-void RedactionWidget::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue)
+void RedactionWidget::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue, int itCount)
 {
 	QMutexLocker Locker(&Synchronizer);
 
@@ -76,6 +78,7 @@ void RedactionWidget::setParameters(const QVector<double>& Scales, const QString
 	smbCompute = computeSymbols;
 	tolAbs = absValue;
 	tolPrc = prcValue;
+	maxIters = itCount;
 }
 
 QList<RedactionWidget::TABLE> RedactionWidget::loadTables(QSqlDatabase& Db)
@@ -221,7 +224,7 @@ QHash<int, QList<RedactionWidget::LABEL>> RedactionWidget::loadLabels(QSqlDataba
 
 	Query.prepare(
 		"SELECT "
-			"O.UID, T.ID, T.POS_X, T.POS_Y, T.TEXT, "
+			"O.UID, T.UID, T.POS_X, T.POS_Y, T.TEXT, "
 			"T.ID_WARSTWY, T.JUSTYFIKACJA, T.KAT "
 		"FROM "
 			"EW_OBIEKTY O "
@@ -241,6 +244,7 @@ QHash<int, QList<RedactionWidget::LABEL>> RedactionWidget::loadLabels(QSqlDataba
 
 	if (Query.exec()) while (Query.next()) List[Query.value(0).toInt()].append(
 	{
+		Db.databaseName(),
 		Query.value(1).toInt(),
 		{
 			Query.value(2).toDouble(),
@@ -283,6 +287,173 @@ QList<QPointF> RedactionWidget::loadSymbols(QSqlDatabase& Db)
 		Query.value(1).toDouble(),
 		Query.value(2).toDouble()
 	});
+
+	return List;
+}
+
+QHash<QString, QList<RedactionWidget::SYMBOL>> RedactionWidget::loadSmbLabels(void)
+{
+	QHash<QString, QList<SYMBOL>> List;
+
+	auto Databases = Core->getDatabases();
+
+	for (int i = 0; i < Databases.size(); ++i)
+	{
+		QSqlQuery Query(Databases[i]); Query.setForwardOnly(true);
+		QHash<int, SYMBOL> Current;
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, P.P0_X, P.P0_Y, "
+				"IIF(P.PN_X IS NULL, P.P1_X, P.PN_X), "
+				"IIF(P.PN_Y IS NULL, P.P1_Y, P.PN_Y) "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 0) "
+			"INNER JOIN "
+				"EW_POLYLINE P "
+			"ON "
+				"(P.ID = E.IDE AND P.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 2");
+
+		if (Query.exec()) while (Query.next()) Current.insert(Query.value(0).toInt(),
+		{
+			QPointF(Query.value(1).toDouble(), Query.value(2).toDouble())
+		});
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, T.UID "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 0) "
+			"INNER JOIN "
+				"EW_TEXT T "
+			"ON "
+				"(T.ID = E.IDE AND T.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 2 AND T.TYP = 6");
+
+		if (Query.exec()) while (Query.next()) Current[Query.value(0).toInt()].Labels.insert(Query.value(1).toInt());
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, T.UID "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 1) "
+			"INNER JOIN "
+				"EW_OBIEKTY P "
+			"ON "
+				"(P.ID = E.IDE AND P.STATUS = 0) "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY K "
+			"ON "
+				"(K.UIDO = P.UID AND K.TYP = 0) "
+			"INNER JOIN "
+				"EW_TEXT T "
+			"ON "
+				"(T.ID = K.IDE AND T.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 2 AND T.TYP = 6");
+
+		if (Query.exec()) while (Query.next()) Current[Query.value(0).toInt()].Labels.insert(Query.value(1).toInt());
+
+		List.insert(Databases[i].databaseName(), Current.values());
+	}
+
+	return List;
+}
+
+QHash<QString, QList<RedactionWidget::LINE>> RedactionWidget::loadLinLabels(void)
+{
+	QHash<QString, QList<LINE>> List;
+
+	auto Databases = Core->getDatabases();
+
+	for (int i = 0; i < Databases.size(); ++i)
+	{
+		QSqlQuery Query(Databases[i]); Query.setForwardOnly(true);
+		QHash<int, LINE> Current;
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, T.POS_X, T.POS_Y "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 0) "
+			"INNER JOIN "
+				"EW_TEXT T "
+			"ON "
+				"(T.ID = E.IDE AND T.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 4 AND T.TYP = 4");
+
+		if (Query.exec()) while (Query.next()) Current[Query.value(0).toInt()].Lines.append(
+		{
+			{ Query.value(1).toDouble(), Query.value(2).toDouble() },
+			{ Query.value(3).toDouble(), Query.value(4).toDouble() }
+		});
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, T.UID "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 0) "
+			"INNER JOIN "
+				"EW_TEXT T "
+			"ON "
+				"(T.ID = E.IDE AND T.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 4 AND T.TYP = 6");
+
+		if (Query.exec()) while (Query.next()) Current[Query.value(0).toInt()].Labels.insert(Query.value(1).toInt());
+
+		Query.prepare(
+			"SELECT "
+				"O.UID, T.UID "
+			"FROM "
+				"EW_OBIEKTY O "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY E "
+			"ON "
+				"(O.UID = E.UIDO AND E.TYP = 1) "
+			"INNER JOIN "
+				"EW_OBIEKTY P "
+			"ON "
+				"(P.ID = E.IDE AND P.STATUS = 0) "
+			"INNER JOIN "
+				"EW_OB_ELEMENTY K "
+			"ON "
+				"(K.UIDO = P.UID AND K.TYP = 0) "
+			"INNER JOIN "
+				"EW_TEXT T "
+			"ON "
+				"(T.ID = K.IDE AND T.STAN_ZMIANY = 0) "
+			"WHERE "
+				"O.STATUS = 0 AND O.RODZAJ = 4 AND T.TYP = 6");
+
+		if (Query.exec()) while (Query.next()) Current[Query.value(0).toInt()].Labels.insert(Query.value(1).toInt());
+
+		List.insert(Databases[i].databaseName(), Current.values());
+	}
 
 	return List;
 }
@@ -363,7 +534,7 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 		const double wY = ((lines > 1 ? maxSize(Label.Text) : Label.Text.size() - corr) * dy) / 2.0;
 		const double wX = ((lines > 1 ? lines * (4.0/3.0) : 1) * dx) / 2.0;
 
-		const QPointF Org = Label.Point;
+		const QPointF Org = Label.Point; if (Label.Org == QPointF()) Label.Org = Org;
 
 		const QVector<QPointF> Move =
 		{
@@ -402,16 +573,18 @@ void RedactionWidget::surfLabels(QHash<int, QList<RedactionWidget::LABEL>>& Labe
 	});
 }
 
-QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels) const
+QSet<QStringList> RedactionWidget::getColisions(QList<LABEL>& Labels) const
 {
+	if (Labels.isEmpty()) return QSet<QStringList>();
+
 	QMutex Locker; QSet<QStringList> Res; int Step(0);
 
 	emit onProgressRename(tr("Computing labels colisions (%p%)"));
 	emit onProgressStart(0, Labels.size()); emit onProgresUpdate(0);
 
-	QtConcurrent::blockingMap(Labels, [this, &Labels, &Res, &Locker, &Step] (const LABEL& Lab) -> void
+	QtConcurrent::blockingMap(Labels, [this, &Labels, &Res, &Locker, &Step] (LABEL& Lab) -> void
 	{
-		for (const auto& Oth : Labels) if (Lab.Uid != Oth.Uid)
+		for (const auto& Oth : Labels) if (Lab.Uid != Oth.Uid || Lab.Dbn != Oth.Dbn)
 		{
 			if ((Lab.Rad + Oth.Rad) < QLineF(Lab.Point, Oth.Point).length()) continue;
 
@@ -437,6 +610,34 @@ QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels) cons
 						y += Int[i].y() / S;
 					}
 
+					QLineF Vect({ x, y }, Lab.Point);
+					QLineF Dmm = Vect; QPointF B;
+
+					for (int i = 1; i < S; ++i) if (Vect.p2() == Lab.Point)
+					{
+						auto t = Vect.intersect({ Int[i - 1], Int[i] }, &B);
+						if (t == QLineF::BoundedIntersection)
+						{
+							if (qAbs(QLineF(Vect.p1(), B).angle() - Vect.angle()) < 1.0) Vect.setP2(B);
+						}
+					}
+
+					if (Vect.p2() == Lab.Point) for (int i = 1; i < S; ++i)
+					{
+						Vect.intersect({ Int[i - 1], Int[i] }, &B);
+
+						const QLineF Dummy = QLineF(Vect.p1(), B);
+						if (Dummy.length() < Lab.Rad && Dmm.length() < Dummy.length())
+						{
+							if (qAbs(Dummy.angle() - Dmm.angle()) < 1.0) Dmm.setP2(B);
+						}
+					}
+
+					if (Vect.p2() == Lab.Point && Vect != Dmm) Vect.setP2(Dmm.p2());
+
+					if (Lab.Vect == QPointF()) Lab.Vect = Vect.p2() - Vect.p1();
+					else Lab.Vect = (Lab.Vect + Vect.p2() - Vect.p1()) / 2.0;
+
 					QStringList Row = QStringList()
 						<< QString::number(x, 'f', 3)
 						<< QString::number(y, 'f', 3)
@@ -458,8 +659,10 @@ QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels) cons
 	return Res;
 }
 
-QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels, const QList<QPointF>& Symbols) const
+QSet<QStringList> RedactionWidget::getColisions(QList<LABEL>& Labels, const QList<QPointF>& Symbols) const
 {
+	if (Labels.isEmpty() || Symbols.isEmpty()) return QSet<QStringList>();
+
 	QMutex Locker; QSet<QStringList> Res; const double Scl = smbScales.value(mapScale) / 2.0; int Step(0);
 
 	static const auto pdistance = [] (const QLineF& L, const QPointF& P) -> double
@@ -482,7 +685,7 @@ QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels, cons
 	emit onProgressRename(tr("Computing symbols colisions (%p%)"));
 	emit onProgressStart(0, Labels.size()); emit onProgresUpdate(0);
 
-	QtConcurrent::blockingMap(Labels, [this, &Symbols, &Res, &Locker, &Step, Scl] (const LABEL& Lab) -> void
+	QtConcurrent::blockingMap(Labels, [this, &Symbols, &Res, &Locker, &Step, Scl] (LABEL& Lab) -> void
 	{
 		for (const auto& Smb : Symbols)
 		{
@@ -512,6 +715,11 @@ QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels, cons
 					<< QString::number(Surf, 'f', 2)
 					<< QString::number((Surf / Lab.Sur) * 100.0, 'f', 0);
 
+				QLineF Vect(Smb, Lab.Point); Vect.setLength(iOK ? -r : r);
+
+				if (Lab.Vect == QPointF()) Lab.Vect = Vect.p2() - Vect.p1();
+				else Lab.Vect = (Lab.Vect + Vect.p2() - Vect.p1()) / 2.0;
+
 				Locker.lock();
 				Res.insert(Row);
 				Locker.unlock();
@@ -524,6 +732,73 @@ QSet<QStringList> RedactionWidget::getColisions(const QList<LABEL>& Labels, cons
 	});
 
 	return Res;
+}
+
+int RedactionWidget::fixColisions(QList<RedactionWidget::LABEL>& Labels, const QHash<QString, QList<SYMBOL>>& Symbols, const QHash<QString, QList<LINE>>& Lines)
+{
+	QMutex Locker; int Count(0); emit onProgressStart(0, 0); const double Scl = smbScales.value(mapScale) / 2.0;
+
+	QtConcurrent::blockingMap(Labels, [&Symbols, &Lines, &Locker, &Count, Scl] (LABEL& Lab) -> void
+	{
+		if (Lab.Vect != QPointF())
+		{
+			Lab.Point += Lab.Vect; Lab.Org += Lab.Vect;
+
+			for (auto& P : Lab.Pol) P += Lab.Vect;
+
+			Lab.Vect = QPointF(); Lab.Mod = true;
+
+			Locker.lock();
+			Count += 1;
+			Locker.unlock();
+		}
+	});
+
+	return Count;
+}
+
+QSet<QStringList> RedactionWidget::saveChanges(const QList<RedactionWidget::LABEL>& Labels)
+{
+	QSet<QStringList> List;
+
+	auto Databases = Core->getDatabases();
+
+	emit onProgressRename(tr("Saving changes (%p%)"));
+	emit onProgressStart(0, Labels.size());
+	emit onProgresUpdate(0); int Step(0);
+
+	for (int i = 0; i < Databases.size(); ++i)
+	{
+		QSqlQuery Query(Databases[i]); Query.setForwardOnly(true);
+
+		Query.prepare("UPDATE EW_TEXT SET "
+				    "POS_X = :x, POS_Y = :y, "
+				    "ODN_X = ODN_X - (:x - POS_X), "
+				    "ODN_Y = ODN_Y - (:y - POS_Y) "
+				    "WHERE UID = :id");
+
+		for (const auto& L : Labels) if (L.Dbn == Databases[i].databaseName())
+		{
+			if (L.Mod)
+			{
+				List.insert(QStringList()
+						  << QString::number(L.Point.x(), 'f', 3)
+						  << QString::number(L.Point.y(), 'f', 3)
+						  << QString::number(L.Sur, 'f', 2)
+						  << QString::number(NAN, 'f', 0));
+
+				Query.bindValue(":x", float(L.Org.x()));
+				Query.bindValue(":y", float(L.Org.y()));
+				Query.bindValue(":id", int(L.Uid));
+
+				Query.exec();
+			}
+
+			emit onProgresUpdate(++Step);
+		}
+	}
+
+	return List;
 }
 
 void RedactionWidget::refreshButtonClicked(void)
@@ -542,7 +817,7 @@ void RedactionWidget::optionsButtonClicked(void)
 
 	connect(Dialog, &RedactionDialog::onDialogAccepted, this, &RedactionWidget::setParameters);
 
-	Dialog->setParameters(smbScales, smbExclude, smbCompute, tolAbs, tolPrc);
+	Dialog->setParameters(smbScales, smbExclude, smbCompute, tolAbs, tolPrc, maxIters);
 }
 
 void RedactionWidget::saveButtonClicked(void)
@@ -563,6 +838,13 @@ void RedactionWidget::saveButtonClicked(void)
 		Stream << Model->data(Model->index(j, 0)).toString() << '\t'
 			  << Model->data(Model->index(j, 1)).toString() << '\n';
 	}
+}
+
+void RedactionWidget::fixButtonClicked(void)
+{
+	setEnabled(false); ui->progressBar->setVisible(true);
+
+	QtConcurrent::run(this, &RedactionWidget::fixRedaction);
 }
 
 void RedactionWidget::scaleValueChanged(int Scale)
@@ -644,12 +926,6 @@ void RedactionWidget::refreshData(void)
 
 		if (Labels.size()) surfLabels(Labels, mapScale, Layers);
 
-		const QString dbName = Databases[i].databaseName();
-		QtConcurrent::blockingMap(Labels, [dbName] (QList<LABEL>& L) -> void
-		{
-			for (auto& l : L) l.Uid = qHash(qMakePair(dbName, l.Uid));
-		});
-
 		for (const auto& L : Labels) allLabels.append(L);
 
 		if (smbCompute) allSmbs.append(loadSymbols(Databases[i]));
@@ -659,6 +935,52 @@ void RedactionWidget::refreshData(void)
 	List += getColisions(allLabels, allSmbs);
 
 	emit onDataReloaded(List);
+}
+
+void RedactionWidget::fixRedaction(void)
+{
+	QMutexLocker Locker(&Synchronizer);
+	QList<LABEL> allLabels;
+	QList<QPointF> allSmbs;
+	int fixes(1);
+
+	auto Databases = Core->getDatabases();
+
+	emit onProgressRename(tr("Loading data"));
+	emit onProgressStart(0, 0);
+	emit onProgresUpdate(0);
+
+	for (int i = 0; i < Databases.size(); ++i)
+	{
+		const auto Tables = loadTables(Databases[i]);
+		const auto Layers = loadLayers(Databases[i]);
+
+		auto Labels = loadLabels(Databases[i]);
+
+		for (const auto& Tab : Tables)
+		{
+			parseLabels(Labels, Tab, loadData(Tab, Databases[i]));
+		}
+
+		if (Labels.size()) surfLabels(Labels, mapScale, Layers);
+
+		for (const auto& L : Labels) allLabels.append(L);
+
+		if (smbCompute) allSmbs.append(loadSymbols(Databases[i]));
+	}
+
+	const auto Symbols = loadSmbLabels();
+	const auto Lines = loadLinLabels();
+
+	for (int i = 0; i < maxIters && fixes > 0; ++i)
+	{
+		getColisions(allLabels);
+		getColisions(allLabels, allSmbs);
+
+		fixes = fixColisions(allLabels, Symbols, Lines);
+	}
+
+	emit onDataReloaded(saveChanges(allLabels));
 }
 
 bool operator == (const RedactionWidget::FIELD& One, const RedactionWidget::FIELD& Two)

@@ -18,99 +18,110 @@
     <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>211</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="3">
     <widget class="QToolButton" name="optionsButton">
-     <property name="text">
-      <string>Options</string>
-     </property>
-     <property name="icon">
-      <iconset theme="preferences-system">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QComboBox" name="scaleCombo">
-     <item>
-      <property name="text">
-       <string>1:500</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>1:1000</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>1:2000</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>1:5000</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QToolButton" name="saveButton">
-     <property name="text">
-      <string>Export</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-save">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5">
-    <widget class="QToolButton" name="refreshButton">
-     <property name="text">
-      <string>Refresh</string>
-     </property>
-     <property name="icon">
-      <iconset theme="view-refresh">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
+	<property name="text">
+	 <string>Options</string>
+	</property>
+	<property name="icon">
+	 <iconset theme="preferences-system">
+	  <normaloff>.</normaloff>.</iconset>
+	</property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QProgressBar" name="progressBar"/>
    </item>
-   <item row="0" column="0" colspan="6">
+   <item row="1" column="4">
+    <widget class="QToolButton" name="saveButton">
+	<property name="text">
+	 <string>Export</string>
+	</property>
+	<property name="icon">
+	 <iconset theme="document-save">
+	  <normaloff>.</normaloff>.</iconset>
+	</property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QComboBox" name="scaleCombo">
+	<item>
+	 <property name="text">
+	  <string>1:500</string>
+	 </property>
+	</item>
+	<item>
+	 <property name="text">
+	  <string>1:1000</string>
+	 </property>
+	</item>
+	<item>
+	 <property name="text">
+	  <string>1:2000</string>
+	 </property>
+	</item>
+	<item>
+	 <property name="text">
+	  <string>1:5000</string>
+	 </property>
+	</item>
+    </widget>
+   </item>
+   <item row="1" column="6">
+    <widget class="QToolButton" name="refreshButton">
+	<property name="text">
+	 <string>Refresh</string>
+	</property>
+	<property name="icon">
+	 <iconset theme="view-refresh">
+	  <normaloff>.</normaloff>.</iconset>
+	</property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer">
+	<property name="orientation">
+	 <enum>Qt::Horizontal</enum>
+	</property>
+	<property name="sizeHint" stdset="0">
+	 <size>
+	  <width>211</width>
+	  <height>20</height>
+	 </size>
+	</property>
+    </spacer>
+   </item>
+   <item row="0" column="0" colspan="7">
     <widget class="QTableView" name="treeView">
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
-     </property>
-     <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectRows</enum>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
+	<property name="editTriggers">
+	 <set>QAbstractItemView::NoEditTriggers</set>
+	</property>
+	<property name="alternatingRowColors">
+	 <bool>true</bool>
+	</property>
+	<property name="selectionMode">
+	 <enum>QAbstractItemView::ExtendedSelection</enum>
+	</property>
+	<property name="selectionBehavior">
+	 <enum>QAbstractItemView::SelectRows</enum>
+	</property>
+	<property name="sortingEnabled">
+	 <bool>true</bool>
+	</property>
+	<attribute name="horizontalHeaderStretchLastSection">
+	 <bool>true</bool>
+	</attribute>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QToolButton" name="fixButton">
+	<property name="text">
+	 <string>Fix</string>
+	</property>
+	<property name="icon">
+	 <iconset theme="tools-check-spelling">
+	  <normaloff>.</normaloff>.</iconset>
+	</property>
     </widget>
    </item>
   </layout>
@@ -131,12 +142,12 @@
    <slot>refreshButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>375</x>
-     <y>281</y>
+	<x>375</x>
+	<y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>373</x>
-     <y>384</y>
+	<x>373</x>
+	<y>384</y>
     </hint>
    </hints>
   </connection>
@@ -147,12 +158,12 @@
    <slot>scaleValueChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>36</x>
-     <y>280</y>
+	<x>36</x>
+	<y>280</y>
     </hint>
     <hint type="destinationlabel">
-     <x>41</x>
-     <y>434</y>
+	<x>41</x>
+	<y>434</y>
     </hint>
    </hints>
   </connection>
@@ -163,12 +174,12 @@
    <slot>saveButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>360</x>
-     <y>290</y>
+	<x>326</x>
+	<y>290</y>
     </hint>
     <hint type="destinationlabel">
-     <x>313</x>
-     <y>409</y>
+	<x>313</x>
+	<y>409</y>
     </hint>
    </hints>
   </connection>
@@ -179,12 +190,28 @@
    <slot>optionsButtonClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>317</x>
-     <y>277</y>
+	<x>296</x>
+	<y>290</y>
     </hint>
     <hint type="destinationlabel">
-     <x>335</x>
-     <y>461</y>
+	<x>335</x>
+	<y>461</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fixButton</sender>
+   <signal>clicked()</signal>
+   <receiver>RedactionWidget</receiver>
+   <slot>fixButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+	<x>350</x>
+	<y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+	<x>363</x>
+	<y>415</y>
     </hint>
    </hints>
   </connection>
@@ -194,5 +221,6 @@
   <slot>scaleValueChanged(int)</slot>
   <slot>saveButtonClicked()</slot>
   <slot>optionsButtonClicked()</slot>
+  <slot>fixButtonClicked()</slot>
  </slots>
 </ui>

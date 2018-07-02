@@ -50,13 +50,14 @@ class RedactionDialog : public QDialog
 					    const QStringList& Exclude,
 					    bool computeSymbols,
 					    double absValue,
-					    double prcValue);
+					    double prcValue,
+					    int maxIters);
 
 	signals:
 
 		void onDialogAccepted(const QVector<double>&,
 						  const QStringList&,
-						  bool, double, double);
+						  bool, double, double, int);
 
 };
 

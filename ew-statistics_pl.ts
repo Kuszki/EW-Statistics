@@ -425,7 +425,7 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
     </message>
     <message>
         <location filename="redactiondialog.ui" line="165"/>
-        <location filename="redactiondialog.ui" line="194"/>
+        <location filename="redactiondialog.ui" line="191"/>
         <source>Disabled</source>
         <translation>Brak</translation>
     </message>
@@ -435,22 +435,27 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation></translation>
     </message>
     <message>
-        <location filename="redactiondialog.ui" line="184"/>
+        <location filename="redactiondialog.ui" line="181"/>
         <source>Percentage tolerance</source>
         <translation>Prób bezwzględny</translation>
     </message>
     <message>
-        <location filename="redactiondialog.ui" line="197"/>
+        <location filename="redactiondialog.ui" line="194"/>
         <source>%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactiondialog.ui" line="210"/>
+        <location filename="redactiondialog.ui" line="204"/>
+        <source>Maximum iterations</source>
+        <translation>Liczba iteracji</translation>
+    </message>
+    <message>
+        <location filename="redactiondialog.ui" line="224"/>
         <source>Excluded symbols</source>
         <translation>Pomijane symbole</translation>
     </message>
     <message>
-        <location filename="redactiondialog.ui" line="224"/>
+        <location filename="redactiondialog.ui" line="238"/>
         <source>Compute symbols colisions</source>
         <translation>Obliczaj kolizje etykiet z symbolami</translation>
     </message>
@@ -463,47 +468,52 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation>Redakcja</translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="49"/>
+        <location filename="redactionwidget.ui" line="50"/>
         <source>1:500</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="54"/>
+        <location filename="redactionwidget.ui" line="55"/>
         <source>1:1000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="59"/>
+        <location filename="redactionwidget.ui" line="60"/>
         <source>1:2000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="64"/>
+        <location filename="redactionwidget.ui" line="65"/>
         <source>1:5000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="37"/>
+        <location filename="redactionwidget.ui" line="119"/>
+        <source>Fix</source>
+        <translation>Napraw</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.ui" line="24"/>
         <source>Options</source>
         <translation>Opcje</translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="72"/>
+        <location filename="redactionwidget.ui" line="38"/>
         <source>Export</source>
         <translation>Eksportuj</translation>
     </message>
     <message>
-        <location filename="redactionwidget.ui" line="83"/>
+        <location filename="redactionwidget.ui" line="73"/>
         <source>Refresh</source>
         <translation>Odśwież</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="409"/>
+        <location filename="redactionwidget.cpp" line="582"/>
         <source>Computing labels colisions (%p%)</source>
         <translation>Obliczanie kolizji etykiet (%p%)</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="482"/>
+        <location filename="redactionwidget.cpp" line="685"/>
         <source>Computing symbols colisions (%p%)</source>
         <translation>Obliczanie kolizji symboli (%p%)</translation>
     </message>
@@ -516,12 +526,12 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation type="vanished">Brak poprawnych danych do zapisu</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="552"/>
+        <location filename="redactionwidget.cpp" line="828"/>
         <source>Save coordinates</source>
         <translation>Zapisz współrzędne</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="553"/>
+        <location filename="redactionwidget.cpp" line="829"/>
         <source>Text files (*.txt)</source>
         <translation>Pliki tekstowe (*.txt)</translation>
     </message>
@@ -530,27 +540,33 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation type="vanished">Rodzaj błędu</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="579"/>
+        <location filename="redactionwidget.cpp" line="766"/>
+        <source>Saving changes (%p%)</source>
+        <translation>Zapisywanie zmian (%p%)</translation>
+    </message>
+    <message>
+        <location filename="redactionwidget.cpp" line="862"/>
         <source>X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="579"/>
+        <location filename="redactionwidget.cpp" line="862"/>
         <source>Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="579"/>
+        <location filename="redactionwidget.cpp" line="862"/>
         <source>Surface</source>
         <translation>Powierzchnia</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="579"/>
+        <location filename="redactionwidget.cpp" line="862"/>
         <source>Ratio</source>
         <translation>Stopień kolizji</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="623"/>
+        <location filename="redactionwidget.cpp" line="912"/>
+        <location filename="redactionwidget.cpp" line="950"/>
         <source>Loading data</source>
         <translation>Wczytywanie danych</translation>
     </message>
@@ -563,14 +579,14 @@ Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on użyteczny �
         <translation type="vanished">Kolizje symboli</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="686"/>
-        <location filename="redactionwidget.cpp" line="713"/>
+        <location filename="redactionwidget.cpp" line="1015"/>
+        <location filename="redactionwidget.cpp" line="1042"/>
         <source>Yes</source>
         <translation>Tak</translation>
     </message>
     <message>
-        <location filename="redactionwidget.cpp" line="686"/>
-        <location filename="redactionwidget.cpp" line="714"/>
+        <location filename="redactionwidget.cpp" line="1015"/>
+        <location filename="redactionwidget.cpp" line="1043"/>
         <source>No</source>
         <translation>Nie</translation>
     </message>

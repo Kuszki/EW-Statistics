@@ -87,6 +87,7 @@ class RedactionWidget : public QWidget
 
 	public: struct LABEL
 	{
+		QString Dbn;
 		int Uid;
 
 		QPointF Point;
@@ -101,6 +102,23 @@ class RedactionWidget : public QWidget
 
 		double Rad;
 		double Sur;
+
+		QPointF Vect;
+		QPointF Org;
+
+		bool Mod = false;
+	};
+
+	public: struct SYMBOL
+	{
+		QPointF Point;
+		QSet<int> Labels;
+	};
+
+	public: struct LINE
+	{
+		QList<QLineF> Lines;
+		QSet<int> Labels;
 	};
 
 	private:
@@ -113,9 +131,11 @@ class RedactionWidget : public QWidget
 		QVector<double> smbScales;
 		QStringList smbExclude;
 		SCALE mapScale = S500;
+
 		bool smbCompute;
 		double tolAbs;
 		double tolPrc;
+		int maxIters;
 
 	public:
 
@@ -128,7 +148,8 @@ class RedactionWidget : public QWidget
 					    const QStringList& Exclude,
 					    bool computeSymbols,
 					    double absValue,
-					    double prcValue);
+					    double prcValue,
+					    int itCount);
 
 	protected:
 
@@ -143,21 +164,31 @@ class RedactionWidget : public QWidget
 
 		QList<QPointF> loadSymbols(QSqlDatabase& Db);
 
+		QHash<QString, QList<SYMBOL>> loadSmbLabels(void);
+		QHash<QString, QList<LINE>> loadLinLabels(void);
+
 		void parseLabels(QHash<int, QList<LABEL>>& Labels, const TABLE& Tab,
 					  const QHash<int, QList<QVariant>>& Values) const;
 
 		void surfLabels(QHash<int, QList<LABEL>>& Labels, SCALE Sc,
 					 const QHash<int, QVector<double>>& Layers) const;
 
-		QSet<QStringList> getColisions(const QList<LABEL>& Labels) const;
-		QSet<QStringList> getColisions(const QList<LABEL>& Labels,
+		QSet<QStringList> getColisions(QList<LABEL>& Labels) const;
+		QSet<QStringList> getColisions(QList<LABEL>& Labels,
 								 const QList<QPointF>& Symbols) const;
+
+		int fixColisions(QList<LABEL>& Labels,
+					  const QHash<QString, QList<SYMBOL>>& Symbols,
+					  const QHash<QString, QList<LINE>>& Lines);
+
+		QSet<QStringList> saveChanges(const QList<LABEL>& Labels);
 
 	private slots:
 
 		void refreshButtonClicked(void);
 		void optionsButtonClicked(void);
 		void saveButtonClicked(void);
+		void fixButtonClicked(void);
 
 		void scaleValueChanged(int Scale);
 
@@ -166,6 +197,7 @@ class RedactionWidget : public QWidget
 		void selectionChanged(void);
 
 		void refreshData(void);
+		void fixRedaction(void);
 
 	signals:
 

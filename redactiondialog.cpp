@@ -47,10 +47,11 @@ void RedactionDialog::accept(void)
 	emit onDialogAccepted(Scales, Exclude,
 					  ui->computeBox->isChecked(),
 					  ui->abstSpin->value(),
-					  ui->prctSpin->value() / 100.0);
+					  ui->prctSpin->value() / 100.0,
+					  ui->iterSpin->value());
 }
 
-void RedactionDialog::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue)
+void RedactionDialog::setParameters(const QVector<double>& Scales, const QStringList& Exclude, bool computeSymbols, double absValue, double prcValue, int maxIters)
 {
 	ui->aScaleSpin->setValue(Scales.value(0, 0.5));
 	ui->bScaleSpin->setValue(Scales.value(1, 1.0));
@@ -63,4 +64,6 @@ void RedactionDialog::setParameters(const QVector<double>& Scales, const QString
 
 	ui->abstSpin->setValue(absValue);
 	ui->prctSpin->setValue(prcValue * 100.0);
+
+	ui->iterSpin->setValue(maxIters);
 }
